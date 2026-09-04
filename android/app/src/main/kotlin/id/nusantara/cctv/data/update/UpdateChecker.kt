@@ -2,6 +2,7 @@ package id.nusantara.cctv.data.update
 
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -31,7 +32,7 @@ object VersionCompare {
 
 /**
  * Cek rilis terbaru dari GitHub Releases (endpoint publik, tanpa auth).
- * Gagal jaringan/parse = null, tanpa exception ke UI.
+ * Gagal jaringan = dicoba ulang sekali, lalu null tanpa exception ke UI.
  */
 class UpdateChecker(
     private val repoOwner: String = "xDvnz",
@@ -39,29 +40,43 @@ class UpdateChecker(
 ) {
 
     suspend fun check(currentVersion: String): UpdateInfo? = withContext(Dispatchers.IO) {
-        runCatching {
-            val request = okhttp3.Request.Builder()
-                .url("https://api.github.com/repos/$repoOwner/$repoName/releases/latest")
-                .header("Accept", "application/vnd.github+json")
-                .build()
-            okhttp3.OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .build()
-                .newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) return@runCatching null
-                    val body = response.body?.string().orEmpty()
-                    val release = Json { ignoreUnknownKeys = true }
-                        .decodeFromString(LatestRelease.serializer(), body)
-                    if (VersionCompare.isRemoteNewer(release.tag_name, currentVersion)) {
-                        UpdateInfo(
-                            version = release.tag_name.removePrefix("v"),
-                            url = release.html_url,
-                        )
-                    } else {
-                        null
-                    }
+        var lastError: Exception? = null
+        var result: UpdateInfo? = null
+        repeat(2) { attempt ->
+            try {
+                result = fetchOnce(currentVersion)
+                return@withContext result
+            } catch (e: Exception) {
+                lastError = e
+                if (attempt == 0) delay(1500)
+            }
+        }
+        result
+    }
+
+    /** Network error melempar; null berarti sudah versi terbaru. */
+    private fun fetchOnce(currentVersion: String): UpdateInfo? {
+        val request = okhttp3.Request.Builder()
+            .url("https://api.github.com/repos/$repoOwner/$repoName/releases/latest")
+            .header("Accept", "application/vnd.github+json")
+            .build()
+        return okhttp3.OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .build()
+            .newCall(request).execute().use { response ->
+                if (!response.isSuccessful) return null
+                val body = response.body?.string().orEmpty()
+                val release = Json { ignoreUnknownKeys = true }
+                    .decodeFromString(LatestRelease.serializer(), body)
+                if (VersionCompare.isRemoteNewer(release.tag_name, currentVersion)) {
+                    UpdateInfo(
+                        version = release.tag_name.removePrefix("v"),
+                        url = release.html_url,
+                    )
+                } else {
+                    null
                 }
-        }.getOrNull()
+            }
     }
 }

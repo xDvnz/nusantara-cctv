@@ -77,6 +77,8 @@ fun AppRoot() {
 
     var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
     LaunchedEffect(Unit) {
+        // beri jaringan waktu siap setelah launch (device/Wi-Fi lambat)
+        kotlinx.coroutines.delay(4000)
         updateInfo = app.container.updateChecker.check(BuildConfig.VERSION_NAME)
     }
     updateInfo?.let { info ->

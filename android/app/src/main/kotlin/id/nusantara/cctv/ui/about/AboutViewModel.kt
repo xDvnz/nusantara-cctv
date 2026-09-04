@@ -22,12 +22,16 @@ data class AboutUiState(
     val syncing: Boolean = false,
     val message: String? = null,
     val isError: Boolean = false,
+    val updateChecking: Boolean = false,
+    val updateChecked: Boolean = false,
+    val updateAvailable: id.nusantara.cctv.data.update.UpdateInfo? = null,
 )
 
 class AboutViewModel(
     private val context: Context,
     private val prefs: AppPreferencesRepository,
     private val repository: CatalogRepository,
+    private val updateChecker: id.nusantara.cctv.data.update.UpdateChecker,
 ) : ViewModel() {
 
     val version: StateFlow<CatalogVersion?> = repository.version()
@@ -84,6 +88,20 @@ class AboutViewModel(
             } catch (e: CatalogSyncException) {
                 _state.value = _state.value.copy(syncing = false, message = e.message, isError = true)
             }
+        }
+    }
+
+    /** Cek pembaruan manual dari layar Tentang. */
+    fun checkForUpdate() {
+        if (_state.value.updateChecking) return
+        viewModelScope.launch {
+            _state.value = _state.value.copy(updateChecking = true, updateChecked = false)
+            val info = updateChecker.check(id.nusantara.cctv.BuildConfig.VERSION_NAME)
+            _state.value = _state.value.copy(
+                updateChecking = false,
+                updateChecked = true,
+                updateAvailable = info,
+            )
         }
     }
 }

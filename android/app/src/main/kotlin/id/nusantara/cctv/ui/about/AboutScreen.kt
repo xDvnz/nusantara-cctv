@@ -41,14 +41,14 @@ fun AboutScreen() {
         val app = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
             as android.app.Application
         val container = extras.appContainer
-        AboutViewModel(app, container.preferencesRepository, container.catalogRepository)
+        AboutViewModel(app, container.preferencesRepository, container.catalogRepository, container.updateChecker)
     })
     val state by vm.state.collectAsState()
     val version by vm.version.collectAsState()
     val sources by vm.sources.collectAsState()
     val themeMode by vm.themeMode.collectAsState()
     val locale by vm.locale.collectAsState()
-    val context = LocalContext.current
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -73,6 +73,43 @@ fun AboutScreen() {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+            }
+        }
+
+        // Pembaruan
+        item {
+            Card {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.update_section), style = MaterialTheme.typography.titleMedium)
+                    Button(onClick = vm::checkForUpdate, enabled = !state.updateChecking) {
+                        Text(
+                            if (state.updateChecking) stringResource(R.string.update_checking)
+                            else stringResource(R.string.check_update_button),
+                        )
+                    }
+                    if (state.updateChecked) {
+                        val info = state.updateAvailable
+                        if (info == null) {
+                            Text(
+                                stringResource(R.string.update_latest_ok, BuildConfig.VERSION_NAME),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        } else {
+                            Text(
+                                stringResource(R.string.update_dialog_message, info.version, BuildConfig.VERSION_NAME),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                            androidx.compose.material3.TextButton(onClick = {
+                                val intent = android.content.Intent(
+                                    android.content.Intent.ACTION_VIEW,
+                                    android.net.Uri.parse(info.url),
+                                ).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                                runCatching { context.startActivity(intent) }
+                            }) { Text(stringResource(R.string.download_button)) }
+                        }
+                    }
                 }
             }
         }

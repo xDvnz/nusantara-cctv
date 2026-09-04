@@ -106,4 +106,12 @@
     <!-- Lain-lain -->
     <string name="camera_offline_badge">Kamera</string>
     <string name="never">belum pernah</string>
+
+    <!-- Cek pembaruan manual -->
+    <string name="update_section">Pembaruan</string>
+    <string name="check_update_button">Cek pembaruan</string>
+    <string name="update_checking">Memeriksa…</string>
+    <string name="update_latest_ok">Aplikasi sudah versi terbaru (v%1$s).</string>
+    <string name="update_check_failed">Pemeriksaan gagal. Periksa koneksi lalu coba lagi.</string>
+    <string name="download_button">Buka halaman unduh</string>
 </resources>

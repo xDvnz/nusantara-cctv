@@ -106,4 +106,12 @@
     <!-- Misc -->
     <string name="camera_offline_badge">Camera</string>
     <string name="never">never</string>
+
+    <!-- Manual update check -->
+    <string name="update_section">Updates</string>
+    <string name="check_update_button">Check for updates</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_latest_ok">App is up to date (v%1$s).</string>
+    <string name="update_check_failed">Check failed. Check your connection and try again.</string>
+    <string name="download_button">Open download page</string>
 </resources>
