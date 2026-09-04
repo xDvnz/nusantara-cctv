@@ -30,8 +30,11 @@ sealed interface Playable {
     /** MJPEG — bitmap frames. */
     data class Mjpeg(val frames: Flow<Bitmap>) : Playable
 
-    /** Format dikenal tapi tidak bisa diputar tanpa infrastruktur tambahan (mis. RTSP tanpa relay). */
-    data class Unsupported(val reason: String) : Playable
+    /**
+     * Format dikenal tapi tidak bisa diputar. Pesan berupa resource string
+     * agar terjemahan dikerjakan di UI, bukan di lapisan data.
+     */
+    data class Unsupported(val messageRes: Int, val arg: String? = null) : Playable
 }
 
 /**
@@ -54,10 +57,11 @@ class StreamEngine(
             mimeType = MimeTypes.APPLICATION_MPD,
         )
         "MJPEG" -> Playable.Mjpeg(mjpegFrames(camera))
-        "RTSP" -> Playable.Unsupported(
-            "RTSP butuh relay/transcoder resmi; kamera ini tidak menyediakan endpoint publik selain RTSP."
+        "RTSP" -> Playable.Unsupported(id.nusantara.cctv.R.string.unsupported_rtsp)
+        else -> Playable.Unsupported(
+            id.nusantara.cctv.R.string.unsupported_format,
+            camera.streamType,
         )
-        else -> Playable.Unsupported("Format stream tidak didukung: ${camera.streamType}")
     }
 
     /**

@@ -79,6 +79,9 @@ class SearchViewModel(
         query.value = q
     }
 
+    /** Nilai query awal untuk field pencarian (state lokal, bukan yang ter-debounce). */
+    fun initialQuery(): String = _state.value.query
+
     fun onFiltersChange(f: SearchFilters) {
         filters.value = f
     }

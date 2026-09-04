@@ -14,8 +14,8 @@ android {
         applicationId = "id.nusantara.cctv"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1        // naikkan +1 setiap rilis
-        versionName = "1.0"    // minor fix → 1.1, major update → 2.0
+        versionCode = 2        // naikkan +1 setiap rilis
+        versionName = "1.1"    // minor fix → 1.1, major update → 2.0
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // URL katalog remote untuk sync (PHASE 8). Kosong = hanya seed bundel.
@@ -70,6 +70,7 @@ dependencies {
     androidTestImplementation(composeBom)
 
     implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

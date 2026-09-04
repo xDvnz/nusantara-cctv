@@ -32,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
+import id.nusantara.cctv.R
 import id.nusantara.cctv.data.model.Camera
 import id.nusantara.cctv.ui.appContainer
 import id.nusantara.cctv.ui.components.CameraCard
@@ -51,6 +53,9 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
     val state by vm.state.collectAsState()
     val listState = rememberLazyListState()
 
+    // Field memakai state lokal agar tidak tertinggal debounce; VM tetap menerima setiap ketikan.
+    var fieldText by remember { mutableStateOf(vm.initialQuery()) }
+
     val shouldLoadMore by remember {
         derivedStateOf {
             val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -63,12 +68,15 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         OutlinedTextField(
-            value = state.query,
-            onValueChange = vm::onQueryChange,
+            value = fieldText,
+            onValueChange = {
+                fieldText = it
+                vm.onQueryChange(it)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            placeholder = { Text("Cari nama kamera, lokasi, wilayah...") },
+            placeholder = { Text(stringResource(R.string.search_hint)) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
             singleLine = true,
         )
@@ -81,39 +89,39 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             FilterDropdown(
-                label = state.filters.province ?: "Provinsi",
+                label = state.filters.province ?: stringResource(R.string.filter_province),
                 options = state.provinces,
                 selected = state.filters.province,
                 onSelect = { vm.onFiltersChange(state.filters.copy(province = it, city = null, district = null)) },
             )
             FilterDropdown(
-                label = state.filters.city ?: "Kota/Kab",
+                label = state.filters.city ?: stringResource(R.string.filter_city),
                 options = state.cities,
                 selected = state.filters.city,
                 enabled = state.filters.province != null,
                 onSelect = { vm.onFiltersChange(state.filters.copy(city = it, district = null)) },
             )
             FilterDropdown(
-                label = state.filters.district ?: "Kecamatan",
+                label = state.filters.district ?: stringResource(R.string.filter_district),
                 options = state.districts,
                 selected = state.filters.district,
                 enabled = state.filters.city != null,
                 onSelect = { vm.onFiltersChange(state.filters.copy(district = it)) },
             )
             FilterDropdown(
-                label = state.filters.status ?: "Status",
+                label = state.filters.status ?: stringResource(R.string.filter_status),
                 options = STATUS_OPTIONS,
                 selected = state.filters.status,
                 onSelect = { vm.onFiltersChange(state.filters.copy(status = it)) },
             )
             FilterDropdown(
-                label = state.filters.streamType ?: "Stream",
+                label = state.filters.streamType ?: stringResource(R.string.filter_stream),
                 options = STREAM_TYPES,
                 selected = state.filters.streamType,
                 onSelect = { vm.onFiltersChange(state.filters.copy(streamType = it)) },
             )
             FilterDropdown(
-                label = state.filters.operator ?: "Operator",
+                label = state.filters.operator ?: stringResource(R.string.filter_operator),
                 options = state.operators,
                 selected = state.filters.operator,
                 onSelect = { vm.onFiltersChange(state.filters.copy(operator = it)) },
@@ -128,19 +136,19 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
         ) {
             if (state.results.isEmpty()) {
                 item {
+                    val hasQuery = state.query.isNotBlank()
                     EmptyState(
                         Icons.Filled.Inventory2,
-                        if (state.query.isBlank()) "Mulai mencari" else "Tidak ditemukan",
-                        if (state.query.isBlank())
-                            "Ketik nama kamera, jalan, kecamatan, atau kota. Gunakan chip filter untuk mempersempit."
-                        else
-                            "Coba kata kunci lain atau longgarkan filter.",
+                        if (hasQuery) stringResource(R.string.search_no_result_title)
+                        else stringResource(R.string.search_empty_title),
+                        if (hasQuery) stringResource(R.string.search_no_result_hint)
+                        else stringResource(R.string.search_empty_hint),
                     )
                 }
             }
             items(state.results, key = { it.id }) { CameraCard(it, onCameraClick) }
             if (state.loadingMore) {
-                item { Text("Memuat...", style = MaterialTheme.typography.bodySmall) }
+                item { Text(stringResource(R.string.loading_more), style = MaterialTheme.typography.bodySmall) }
             }
         }
     }
@@ -160,11 +168,11 @@ private fun FilterDropdown(
         enabled = enabled,
         onClick = { expanded = !expanded },
         label = { Text(label) },
-        leadingIcon = { Icon(Icons.Filled.FilterList, contentDescription = null, modifier = Modifier.padding(0.dp)) },
+        leadingIcon = { Icon(Icons.Filled.FilterList, contentDescription = null) },
     )
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         if (selected != null) {
-            DropdownMenuItem(text = { Text("(semua)") }, onClick = {
+            DropdownMenuItem(text = { Text(stringResource(R.string.filter_all)) }, onClick = {
                 expanded = false
                 onSelect(null)
             })

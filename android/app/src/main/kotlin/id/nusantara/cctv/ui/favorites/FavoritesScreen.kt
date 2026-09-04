@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.res.stringResource
 import id.nusantara.cctv.data.catalog.CatalogRepository
 import id.nusantara.cctv.data.model.Camera
 import id.nusantara.cctv.ui.appContainer
@@ -43,13 +44,18 @@ fun FavoritesScreen(onCameraClick: (Camera) -> Unit) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item { Text("Favorit", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall) }
+        item {
+            Text(
+                stringResource(id.nusantara.cctv.R.string.favorites_title),
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+            )
+        }
         if (favorites.isEmpty()) {
             item {
                 EmptyState(
                     Icons.Filled.FavoriteBorder,
-                    "Belum ada favorit",
-                    "Tandai kamera sebagai favorit dari halaman detail kamera.",
+                    stringResource(id.nusantara.cctv.R.string.favorites_empty_title),
+                    stringResource(id.nusantara.cctv.R.string.favorites_empty_hint),
                 )
             }
         }

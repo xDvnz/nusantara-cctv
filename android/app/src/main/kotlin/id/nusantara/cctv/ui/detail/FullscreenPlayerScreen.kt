@@ -103,10 +103,10 @@ fun FullscreenPlayerScreen(cameraId: String, onBack: () -> Unit) {
             else -> {}
         }
 
-        val error = (ui as? PlayerUi.Error)?.message
+        val error = (ui as? PlayerUi.Error)
         if (error != null) {
             androidx.compose.material3.Text(
-                error,
+                playerErrorText(error),
                 color = Color.White,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
             )
@@ -115,7 +115,7 @@ fun FullscreenPlayerScreen(cameraId: String, onBack: () -> Unit) {
         IconButton(onClick = onBack, modifier = Modifier.align(Alignment.TopStart)) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Kembali",
+                contentDescription = androidx.compose.ui.res.stringResource(id.nusantara.cctv.R.string.back),
                 tint = Color.White,
             )
         }

@@ -13,12 +13,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/** Jenis error pemutar; teks tampil di-resolve UI via resource string. */
+enum class PlayerError { NETWORK, UNAVAILABLE, PLAYBACK, SOURCE, MJPEG_INACTIVE, ENDED, UNSUPPORTED }
+
 /** UI state pemutar; dipakai layar detail (inline) dan layar fullscreen. */
 sealed interface PlayerUi {
     data object Idle : PlayerUi
     data object Loading : PlayerUi
     data object Playing : PlayerUi
-    data class Error(val message: String) : PlayerUi
+
+    /** @param messageRes khusus UNSUPPORTED: resource string pesan yang tepat. */
+    data class Error(
+        val kind: PlayerError,
+        val detail: String? = null,
+        val messageRes: Int? = null,
+        val messageArg: String? = null,
+    ) : PlayerUi
+
     data class MjpegFrame(val bitmap: Bitmap) : PlayerUi
 }
 
@@ -47,24 +58,21 @@ class StreamPlayerController(
             when (playbackState) {
                 Player.STATE_BUFFERING -> _ui.value = PlayerUi.Loading
                 Player.STATE_READY -> _ui.value = PlayerUi.Playing
-                Player.STATE_ENDED -> _ui.value =
-                    PlayerUi.Error("Stream berakhir. Kamera mungkin offline.")
+                Player.STATE_ENDED -> _ui.value = PlayerUi.Error(PlayerError.ENDED)
                 else -> {}
             }
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            _ui.value = PlayerUi.Error(
-                when (error.errorCode) {
-                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
-                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
-                    -> "Koneksi gagal. Periksa jaringan lalu muat ulang."
-                    PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
-                    PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
-                    -> "Stream tidak tersedia. Kamera kemungkinan offline."
-                    else -> "Gagal memutar: ${error.errorCodeName}"
-                },
-            )
+            _ui.value = when (error.errorCode) {
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                -> PlayerUi.Error(PlayerError.NETWORK)
+                PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
+                PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+                -> PlayerUi.Error(PlayerError.UNAVAILABLE)
+                else -> PlayerUi.Error(PlayerError.PLAYBACK, detail = error.errorCodeName)
+            }
         }
     }
 
@@ -81,7 +89,7 @@ class StreamPlayerController(
                 player.addListener(listener)
                 val mediaItem = MediaItem.fromUri(camera.streamUrl)
                 val source = runCatching { playable.factory(mediaItem) }.getOrElse { e ->
-                    _ui.value = PlayerUi.Error("Sumber tidak dapat diputar: ${e.message ?: "tidak diketahui"}")
+                    _ui.value = PlayerUi.Error(PlayerError.SOURCE, detail = e.message)
                     return
                 }
                 player.setMediaSource(source)
@@ -98,11 +106,15 @@ class StreamPlayerController(
                             _ui.value = PlayerUi.MjpegFrame(bitmap)
                         }
                     } finally {
-                        if (!emitted) _ui.value = PlayerUi.Error("Stream MJPEG tidak aktif.")
+                        if (!emitted) _ui.value = PlayerUi.Error(PlayerError.MJPEG_INACTIVE)
                     }
                 }
             }
-            is Playable.Unsupported -> _ui.value = PlayerUi.Error(playable.reason)
+            is Playable.Unsupported -> _ui.value = PlayerUi.Error(
+                PlayerError.UNSUPPORTED,
+                messageRes = playable.messageRes,
+                messageArg = playable.arg,
+            )
         }
     }
 

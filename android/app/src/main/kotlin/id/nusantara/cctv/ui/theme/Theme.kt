@@ -10,6 +10,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import id.nusantara.cctv.data.prefs.ThemeMode
 
 // Palet: teal monitoring di atas latar biru-gelap kehutanan (identitas CCTV malam hari)
 private val Teal = Color(0xFF2BD9C8)
@@ -47,10 +48,15 @@ private val LightScheme = lightColorScheme(
 
 @Composable
 fun NusantaraTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
+    val darkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
     val scheme = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)

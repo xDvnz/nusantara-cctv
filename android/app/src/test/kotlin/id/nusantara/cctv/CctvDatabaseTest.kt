@@ -135,6 +135,21 @@ class CctvDatabaseTest {
     }
 
     @Test
+    fun `riwayat tonton terurut dan menyaring kamera yatim`() = runBlocking {
+        db.cameraDao().upsertAll(listOf(camera("1", "A"), camera("2", "B")))
+        db.cameraHistoryDao().upsert(id.nusantara.cctv.data.db.CameraHistoryEntity("1", 100L))
+        db.cameraHistoryDao().upsert(id.nusantara.cctv.data.db.CameraHistoryEntity("2", 200L))
+        db.cameraHistoryDao().upsert(id.nusantara.cctv.data.db.CameraHistoryEntity("hilang", 300L))
+
+        val recent = db.cameraHistoryDao().recent(10).first()
+        // terbaru dulu; kamera yang tak ada di katalog tidak ikut
+        assertEquals(listOf("2", "1"), recent.map { it.cameraId })
+
+        db.cameraHistoryDao().pruneOrphaned()
+        assertEquals(2, db.cameraHistoryDao().recent(10).first().size)
+    }
+
+    @Test
     fun `seed dari aset memuat katalog bundel`() = runBlocking {
         val repository = CatalogRepository(context, db, initialRemoteUrl = null)
         repository.seedFromAssetsIfNeeded()

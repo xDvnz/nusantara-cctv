@@ -86,6 +86,11 @@ class CameraDetailViewModel(
 
     fun startStream(camera: Camera) = controller.start(camera)
 
+    /** Catat ke riwayat beranda (baru ditonton). */
+    fun recordView() {
+        viewModelScope.launch { repository.recordView(cameraId) }
+    }
+
     fun retry(camera: Camera) = controller.retry(camera)
 
     fun releasePlayer() = controller.release()
@@ -126,16 +131,19 @@ fun CameraDetailScreen(
 
     val cam = camera
     DisposableEffect(cam?.id) {
-        cam?.let { vm.startStream(it) }
+        cam?.let {
+            vm.startStream(it)
+            vm.recordView()
+        }
         onDispose { vm.releasePlayer() }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text(cam?.cameraName ?: "Detail kamera") },
+            title = { Text(cam?.cameraName ?: stringResource(R.string.detail_title_fallback)) },
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Kembali")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                 }
             },
             actions = {
@@ -177,14 +185,14 @@ fun CameraDetailScreen(
             ) {
                 OutlinedButton(onClick = onFullscreen, modifier = Modifier.height(40.dp)) {
                     Icon(Icons.Filled.Fullscreen, contentDescription = null)
-                    Text("  Layar penuh")
+                    Text("  " + stringResource(R.string.fullscreen_button))
                 }
                 OutlinedButton(onClick = { cam.let(vm::retry) }, modifier = Modifier.height(40.dp)) {
                     Icon(Icons.Filled.Refresh, contentDescription = null)
-                    Text("  Muat ulang")
+                    Text("  " + stringResource(R.string.reload_button))
                 }
                 OutlinedButton(onClick = { cam.let(vm::refreshStatus) }, modifier = Modifier.height(40.dp)) {
-                    Text("Periksa status")
+                    Text(stringResource(R.string.check_status_button))
                 }
             }
 
@@ -193,7 +201,9 @@ fun CameraDetailScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         StatusDot(cam.status)
                         Text(
-                            "  ${cam.status}" + (cam.lastChecked?.let { " • dicek $it" } ?: ""),
+                            "  ${cam.status}" + (cam.lastChecked?.let {
+                                " • " + stringResource(R.string.checked_at, it)
+                            } ?: ""),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -207,8 +217,11 @@ fun CameraDetailScreen(
                     )
                     if (cam.latitude != null && cam.longitude != null) {
                         Text(
-                            "Koordinat: %.6f, %.6f (%s)".format(
-                                cam.latitude, cam.longitude, cam.locationAccuracy,
+                            stringResource(
+                                R.string.coordinates_label,
+                                "%.6f".format(cam.latitude),
+                                "%.6f".format(cam.longitude),
+                                cam.locationAccuracy,
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -268,7 +281,7 @@ fun PlayerSurface(
             else -> {}
         }
 
-        val error = (playerUi as? PlayerUi.Error)?.message
+        val error = (playerUi as? PlayerUi.Error)
         if (error != null) {
             Column(
                 modifier = Modifier
@@ -283,7 +296,11 @@ fun PlayerSurface(
                     color = Color.White,
                     style = MaterialTheme.typography.labelLarge,
                 )
-                Text(error, color = Color(0xFFCCCCCC), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    playerErrorText(error),
+                    color = Color(0xFFCCCCCC),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
     }

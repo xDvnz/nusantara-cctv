@@ -1,18 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Nusantara CCTV</string>
+
+    <!-- Navigasi -->
     <string name="tab_home">Beranda</string>
     <string name="tab_map">Peta</string>
-    <string name="tab_regions">Wilayah</string>
     <string name="tab_search">Cari</string>
     <string name="tab_favorites">Favorit</string>
-    <string name="offline_banner">Tidak ada koneksi internet. Metadata kamera tetap bisa dibuka; live stream butuh koneksi.</string>
-    <string name="error_player">Stream tidak dapat diputar. Kamera mungkin sedang offline.</string>
-    <string name="retry">Coba lagi</string>
-    <string name="open_in_map">Buka di peta</string>
+    <string name="tab_about">Tentang</string>
+
+    <!-- Beranda -->
+    <string name="home_title">Nusantara CCTV</string>
+    <string name="home_subtitle">Pantauan CCTV publik Indonesia</string>
+    <string name="stat_total">Total</string>
+    <string name="stat_online">Online</string>
+    <string name="stat_offline">Offline</string>
+    <string name="section_favorites">Favorit</string>
+    <string name="section_history">Baru ditonton</string>
+    <string name="section_recent_checked">Terakhir diperiksa</string>
+    <string name="history_empty">Kamera yang kamu buka akan muncul di sini.</string>
+    <string name="history_see_all">Lihat semua</string>
+    <string name="settings_content_desc">Pengaturan</string>
+
+    <!-- Pencarian -->
+    <string name="search_hint">Cari nama kamera, lokasi, wilayah…</string>
+    <string name="filter_province">Provinsi</string>
+    <string name="filter_city">Kota/Kab</string>
+    <string name="filter_district">Kecamatan</string>
+    <string name="filter_status">Status</string>
+    <string name="filter_stream">Stream</string>
+    <string name="filter_operator">Operator</string>
+    <string name="filter_all">(semua)</string>
+    <string name="search_empty_title">Mulai mencari</string>
+    <string name="search_empty_hint">Ketik nama kamera, jalan, kecamatan, atau kota. Gunakan chip filter untuk mempersempit.</string>
+    <string name="search_no_result_title">Tidak ditemukan</string>
+    <string name="search_no_result_hint">Coba kata kunci lain atau longgarkan filter.</string>
+    <string name="loading_more">Memuat…</string>
+
+    <!-- Favorit -->
+    <string name="favorites_title">Favorit</string>
+    <string name="favorites_empty_title">Belum ada favorit</string>
+    <string name="favorites_empty_hint">Tandai kamera sebagai favorit dari halaman detail kamera.</string>
+
+    <!-- Detail kamera -->
+    <string name="detail_title_fallback">Detail kamera</string>
+    <string name="back">Kembali</string>
+    <string name="fullscreen_button">Layar penuh</string>
+    <string name="reload_button">Muat ulang</string>
+    <string name="check_status_button">Periksa status</string>
+    <string name="checked_at">dicek %1$s</string>
+    <string name="coordinates_label">Koordinat: %1$s, %2$s (%3$s)</string>
+    <string name="source_attribution">Sumber: %1$s (%2$s)</string>
     <string name="favorite_add">Tambah favorit</string>
     <string name="favorite_remove">Hapus favorit</string>
-    <string name="source_attribution">Sumber: %1$s (%2$s)</string>
-    <string name="sync_now">Sinkron katalog</string>
-    <string name="refresh_status">Periksa status</string>
+    <string name="open_in_map">Buka di peta</string>
+    <string name="error_player">Stream tidak dapat diputar. Kamera mungkin sedang offline.</string>
+    <string name="retry">Coba lagi</string>
+
+    <!-- Status -->
+    <string name="stream_ended">Stream berakhir. Kamera mungkin offline.</string>
+    <string name="connection_failed">Koneksi gagal. Periksa jaringan lalu muat ulang.</string>
+    <string name="stream_unavailable">Stream tidak tersedia. Kamera kemungkinan offline.</string>
+    <string name="play_failed">Gagal memutar: %1$s</string>
+    <string name="source_not_playable">Sumber tidak dapat diputar: %1$s</string>
+    <string name="mjpeg_inactive">Stream MJPEG tidak aktif.</string>
+    <string name="unsupported_rtsp">RTSP butuh relay/transcoder resmi; kamera ini tidak menyediakan endpoint publik selain RTSP.</string>
+    <string name="unsupported_format">Format stream tidak didukung: %1$s</string>
+
+    <!-- Banner -->
+    <string name="offline_banner">Tidak ada koneksi internet. Metadata kamera tetap bisa dibuka; live stream butuh koneksi.</string>
+
+    <!-- Tentang -->
+    <string name="about_title">Tentang</string>
+    <string name="about_app_section">Aplikasi</string>
+    <string name="about_version">Versi aplikasi</string>
+    <string name="about_developer_section">Pengembang</string>
+    <string name="about_developer_name">Devan (xDvnz)</string>
+    <string name="about_developer_note">Dibangun sebagai penampil independen untuk stream CCTV publik resmi pemerintah daerah Indonesia. Tidak berafiliasi dengan operator mana pun.</string>
+    <string name="about_repo">Repositori kode</string>
+    <string name="about_appearance_section">Tampilan</string>
+    <string name="theme_label">Mode tampilan</string>
+    <string name="theme_system">Ikut sistem</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+    <string name="language_label">Bahasa</string>
+    <string name="language_id">Indonesia</string>
+    <string name="language_en">English</string>
+    <string name="about_catalog_section">Katalog</string>
+    <string name="catalog_version_label">Versi: %1$s • Dibuat: %2$s</string>
+    <string name="catalog_remote_hint">Katalog dibundel bersama aplikasi. Isi URL katalog remote (JSON skema sama) untuk memperbarui daftar kamera tanpa update APK. Kosong = hanya seed bundel.</string>
+    <string name="catalog_url_label">URL katalog remote (opsional)</string>
+    <string name="save_sync_button">Simpan &amp; sinkron</string>
+    <string name="syncing">Menyinkronkan…</string>
+    <string name="sync_updated">Katalog diperbarui dari server.</string>
+    <string name="sync_up_to_date">Katalog sudah versi terbaru.</string>
+    <string name="about_sources_section">Sumber data &amp; atribusi</string>
+    <string name="about_sources_note">Seluruh stream berasal dari portal publik resmi pemerintah daerah. Aplikasi hanya menampilkan tautan publik; tidak merekam dan tidak mendistribusikan ulang. Hormati ketentuan tiap operator.</string>
+
+    <!-- Cek pembaruan -->
+    <string name="update_dialog_title">Versi baru tersedia</string>
+    <string name="update_dialog_message">Versi %1$s sudah dirilis (kamu memakai %2$s). Perbarui aplikasi untuk mendapatkan perbaikan dan fitur terbaru.</string>
+    <string name="update_dialog_later">Nanti</string>
+    <string name="update_dialog_open">Buka halaman unduh</string>
+
+    <!-- Lain-lain -->
+    <string name="camera_offline_badge">Kamera</string>
+    <string name="never">belum pernah</string>
 </resources>

@@ -51,6 +51,12 @@ data class CatalogMetaEntity(
     val value: String,
 )
 
+@Entity(tableName = "camera_history", primaryKeys = ["cameraId"])
+data class CameraHistoryEntity(
+    val cameraId: String,
+    val viewedAt: Long,
+)
+
 @Entity(tableName = "sources", primaryKeys = ["sourceId"])
 data class SourceEntity(
     val sourceId: String,
@@ -179,9 +185,26 @@ interface SourceDao {
     suspend fun upsertAll(sources: List<SourceEntity>)
 }
 
+@Dao
+interface CameraHistoryDao {
+    /** Riwayat terbaru; kamera yang sudah dihapus dari katalog tidak ikut. */
+    @Query(
+        """SELECT h.cameraId AS cameraId, h.viewedAt AS viewedAt FROM camera_history h
+        WHERE EXISTS(SELECT 1 FROM cameras c WHERE c.id = h.cameraId)
+        ORDER BY h.viewedAt DESC LIMIT :limit"""
+    )
+    fun recent(limit: Int): Flow<List<CameraHistoryEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entry: CameraHistoryEntity)
+
+    @Query("DELETE FROM camera_history WHERE cameraId NOT IN (SELECT id FROM cameras)")
+    suspend fun pruneOrphaned()
+}
+
 @Database(
-    entities = [CameraEntity::class, FavoriteEntity::class, CatalogMetaEntity::class, SourceEntity::class],
-    version = 1,
+    entities = [CameraEntity::class, FavoriteEntity::class, CatalogMetaEntity::class, SourceEntity::class, CameraHistoryEntity::class],
+    version = 2,
     exportSchema = false,
 )
 abstract class CctvDatabase : RoomDatabase() {
@@ -189,6 +212,19 @@ abstract class CctvDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun catalogMetaDao(): CatalogMetaDao
     abstract fun sourceDao(): SourceDao
+    abstract fun cameraHistoryDao(): CameraHistoryDao
+
+    companion object {
+        /** v1 -> v2: tambah tabel riwayat tonton. Data lama (katalog/favorit) dipertahankan. */
+        val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
+            override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS camera_history (" +
+                        "cameraId TEXT NOT NULL PRIMARY KEY, viewedAt INTEGER NOT NULL)"
+                )
+            }
+        }
+    }
 }
 
 fun CameraEntity.toModel() = Camera(

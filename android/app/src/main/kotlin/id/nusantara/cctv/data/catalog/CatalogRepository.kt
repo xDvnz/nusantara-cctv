@@ -4,6 +4,7 @@ import android.content.Context
 import id.nusantara.cctv.data.db.CatalogMetaEntity
 import id.nusantara.cctv.data.db.CctvDatabase
 import id.nusantara.cctv.data.db.CameraEntity
+import id.nusantara.cctv.data.db.CameraHistoryEntity
 import id.nusantara.cctv.data.db.FavoriteEntity
 import id.nusantara.cctv.data.db.SourceEntity
 import id.nusantara.cctv.data.db.toModel
@@ -105,6 +106,19 @@ class CatalogRepository(
         if (exists) dao.remove(id) else dao.add(FavoriteEntity(id, System.currentTimeMillis()))
     }
 
+    /** Catat kamera sebagai "baru ditonton" (riwayat beranda); dipanggil saat stream dibuka. */
+    suspend fun recordView(cameraId: String) {
+        db.cameraHistoryDao().upsert(CameraHistoryEntity(cameraId, System.currentTimeMillis()))
+    }
+
+    /** Riwayat terbaru, terbatas [limit], hanya kamera yang masih ada di katalog. */
+    fun observeRecentHistory(limit: Int = 12): Flow<List<Camera>> =
+        db.cameraHistoryDao().recent(limit).map { entries ->
+            val ids = entries.map { it.cameraId }
+            if (ids.isEmpty()) emptyList() else db.cameraDao().byIds(ids).map { it.toModel() }
+                .sortedBy { cams -> entries.indexOfFirst { it.cameraId == cams.id } }
+        }
+
     suspend fun sourceConfig(sourceId: String): CameraSourceConfig? {
         val entity = db.sourceDao().byId(sourceId) ?: return null
         return CameraSourceConfig(
@@ -149,6 +163,11 @@ class CatalogRepository(
         val dto = json.decodeFromString(CatalogFileDto.serializer(), raw)
         applyCatalog(dto)
         db.catalogMetaDao().put(CatalogMetaEntity(META_SEEDED, dto.generated_at))
+    }
+
+    /** Hapus riwayat kamera yang sudah tak ada di katalog (panggilan periodik aplikasi). */
+    suspend fun pruneHistory() {
+        db.cameraHistoryDao().pruneOrphaned()
     }
 
     /**

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nusantara CCTV</string>
+
+    <!-- Navigation -->
+    <string name="tab_home">Home</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_about">About</string>
+
+    <!-- Home -->
+    <string name="home_title">Nusantara CCTV</string>
+    <string name="home_subtitle">Indonesian public CCTV monitoring</string>
+    <string name="stat_total">Total</string>
+    <string name="stat_online">Online</string>
+    <string name="stat_offline">Offline</string>
+    <string name="section_favorites">Favorites</string>
+    <string name="section_history">Recently viewed</string>
+    <string name="section_recent_checked">Recently checked</string>
+    <string name="history_empty">Cameras you open will appear here.</string>
+    <string name="history_see_all">See all</string>
+    <string name="settings_content_desc">Settings</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search camera name, location, region…</string>
+    <string name="filter_province">Province</string>
+    <string name="filter_city">City/Regency</string>
+    <string name="filter_district">District</string>
+    <string name="filter_status">Status</string>
+    <string name="filter_stream">Stream</string>
+    <string name="filter_operator">Operator</string>
+    <string name="filter_all">(all)</string>
+    <string name="search_empty_title">Start searching</string>
+    <string name="search_empty_hint">Type a camera name, street, district, or city. Use the filter chips to narrow down.</string>
+    <string name="search_no_result_title">No results</string>
+    <string name="search_no_result_hint">Try different keywords or relax the filters.</string>
+    <string name="loading_more">Loading…</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty_title">No favorites yet</string>
+    <string name="favorites_empty_hint">Mark cameras as favorites from the camera detail page.</string>
+
+    <!-- Camera detail -->
+    <string name="detail_title_fallback">Camera detail</string>
+    <string name="back">Back</string>
+    <string name="fullscreen_button">Fullscreen</string>
+    <string name="reload_button">Reload</string>
+    <string name="check_status_button">Check status</string>
+    <string name="checked_at">checked %1$s</string>
+    <string name="coordinates_label">Coordinates: %1$s, %2$s (%3$s)</string>
+    <string name="source_attribution">Source: %1$s (%2$s)</string>
+    <string name="favorite_add">Add to favorites</string>
+    <string name="favorite_remove">Remove from favorites</string>
+    <string name="open_in_map">Open in map</string>
+    <string name="error_player">Stream cannot be played. The camera may be offline.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Status -->
+    <string name="stream_ended">Stream ended. The camera may be offline.</string>
+    <string name="connection_failed">Connection failed. Check your network and reload.</string>
+    <string name="stream_unavailable">Stream unavailable. The camera is probably offline.</string>
+    <string name="play_failed">Playback failed: %1$s</string>
+    <string name="source_not_playable">Source cannot be played: %1$s</string>
+    <string name="mjpeg_inactive">MJPEG stream is inactive.</string>
+    <string name="unsupported_rtsp">RTSP requires an official relay/transcoder; this camera provides no public endpoint other than RTSP.</string>
+    <string name="unsupported_format">Unsupported stream format: %1$s</string>
+
+    <!-- Banner -->
+    <string name="offline_banner">No internet connection. Camera metadata stays available; live streams need a connection.</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_app_section">App</string>
+    <string name="about_version">App version</string>
+    <string name="about_developer_section">Developer</string>
+    <string name="about_developer_name">Devan (xDvnz)</string>
+    <string name="about_developer_note">An independent viewer for official Indonesian local-government public CCTV streams. Not affiliated with any operator.</string>
+    <string name="about_repo">Source repository</string>
+    <string name="about_appearance_section">Appearance</string>
+    <string name="theme_label">Appearance mode</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language_label">Language</string>
+    <string name="language_id">Indonesia</string>
+    <string name="language_en">English</string>
+    <string name="about_catalog_section">Catalog</string>
+    <string name="catalog_version_label">Version: %1$s • Generated: %2$s</string>
+    <string name="catalog_remote_hint">The catalog ships with the app. Fill in a remote catalog URL (same JSON schema) to update the camera list without an APK update. Empty = bundled seed only.</string>
+    <string name="catalog_url_label">Remote catalog URL (optional)</string>
+    <string name="save_sync_button">Save &amp; sync</string>
+    <string name="syncing">Syncing…</string>
+    <string name="sync_updated">Catalog updated from server.</string>
+    <string name="sync_up_to_date">Catalog is already up to date.</string>
+    <string name="about_sources_section">Data sources &amp; attribution</string>
+    <string name="about_sources_note">All streams come from official local-government public portals. The app only links public feeds; it records nothing and redistributes nothing. Respect each operator\'s terms.</string>
+
+    <!-- Update check -->
+    <string name="update_dialog_title">New version available</string>
+    <string name="update_dialog_message">Version %1$s has been released (you are using %2$s). Update the app to get the latest fixes and features.</string>
+    <string name="update_dialog_later">Later</string>
+    <string name="update_dialog_open">Open download page</string>
+
+    <!-- Misc -->
+    <string name="camera_offline_badge">Camera</string>
+    <string name="never">never</string>
+</resources>

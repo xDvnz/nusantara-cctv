@@ -30,6 +30,9 @@ class CctvApp : Application() {
             runCatching { container.catalogRepository.seedFromAssetsIfNeeded() }
                 .onFailure { android.util.Log.e("CctvApp", "seed gagal", it) }
         }
+        container.appScope.launch {
+            runCatching { container.catalogRepository.pruneHistory() }
+        }
     }
 }
 
@@ -43,11 +46,18 @@ class AppContainer(private val app: Application) {
         app,
         CctvDatabase::class.java,
         "nusantara_cctv.db",
-    ).fallbackToDestructiveMigrationOnDowngrade().build()
+    )
+        .addMigrations(CctvDatabase.MIGRATION_1_2)
+        .fallbackToDestructiveMigrationOnDowngrade()
+        .build()
 
     val sourceHttp = SourceHttp()
 
     val networkMonitor = NetworkMonitor(app).also { it.start() }
+
+    val preferencesRepository = id.nusantara.cctv.data.prefs.AppPreferencesRepository(app)
+
+    val updateChecker = id.nusantara.cctv.data.update.UpdateChecker()
 
     private val remoteCatalogUrl: String = BuildConfig.REMOTE_CATALOG_URL
 
