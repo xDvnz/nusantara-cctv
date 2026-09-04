@@ -85,7 +85,14 @@ android/        proyek Android (Kotlin, Compose, Media3, Room, osmdroid)
 Dokumentasi lain: [ARCHITECTURE](docs/architecture/ARCHITECTURE.md) ·
 [DATA-SOURCES](docs/data-sources/DATA-SOURCES.md) ·
 [METHODOLOGY](docs/research/METHODOLOGY.md) · [TESTING](docs/TESTING.md) ·
-[PRIVACY](docs/PRIVACY.md) · [LICENSES](docs/LICENSES.md)
+[PRIVACY](docs/PRIVACY.md) · [LICENSES](docs/LICENSES.md) ·
+[RELEASING](docs/RELEASING.md)
+
+## Download APK
+
+Rilis terbaru di [GitHub Releases](https://github.com/xDvnz/nusantara-cctv/releases):
+`NusantaraCCTV-v<versi>-release.apk` — install langsung, min. Android 8.0.
+Update kecil naik di angka belakang (1.0 → 1.1), update besar ganti angka depan (→ 2.0).
 
 ## Legal
 
