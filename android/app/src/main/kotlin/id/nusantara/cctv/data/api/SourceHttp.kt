@@ -18,15 +18,31 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
  * dipakai OkHttp DAN StreamEngine (header Cookie untuk Media3), sehingga satu kali bootstrap
  * dipakai semua request berikutnya.
  *
+ * UA WAJIB konsisten di bootstrap DAN akses stream: portal Malang mengikat sesi cookie ke
+ * User-Agent — request dengan UA berbeda dari bootstrap ditolak 403.
+ *
  * Semua fungsi blocking; panggil dari Dispatchers.IO.
  */
 class SourceHttp {
+
+    companion object {
+        /** Satu UA browser untuk SEMUA request sesi (bootstrap/probe/manifest/segment). */
+        const val USER_AGENT =
+            "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36"
+    }
+
     val cookieStore: CookieStore = CookieManager().cookieStore
 
     private val cookieHandler = CookieManager(cookieStore, CookiePolicy.ACCEPT_ORIGINAL_SERVER)
 
     val client: OkHttpClient = OkHttpClient.Builder()
         .cookieJar(CookieJarBridge(cookieHandler))
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .header("User-Agent", USER_AGENT)
+                .build()
+            chain.proceed(request)
+        }
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(20, TimeUnit.SECONDS)
         .callTimeout(30, TimeUnit.SECONDS)
@@ -73,8 +89,15 @@ private class CookieJarBridge(
         }.getOrNull().orEmpty()
         val result = mutableListOf<okhttp3.Cookie>()
         headers.forEach { (_, values) ->
-            values.forEach { value ->
-                okhttp3.Cookie.parse(url, value)?.let { result.add(it) }
+            values.forEach { combined ->
+                // CookieManager menggabungkan seluruh cookie jadi SATU header "k1=v1; k2=v2; ..."
+                // — pecah per pasangan, jangan di-parse sebagai satu cookie.
+                combined.split(";").forEach { pair ->
+                    val trimmed = pair.trim()
+                    if (trimmed.contains('=')) {
+                        okhttp3.Cookie.parse(url, trimmed)?.let { result.add(it) }
+                    }
+                }
             }
         }
         return result

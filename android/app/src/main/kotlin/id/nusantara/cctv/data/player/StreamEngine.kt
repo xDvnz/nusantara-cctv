@@ -47,21 +47,33 @@ class StreamEngine(
     private val sourceConfigOf: (String) -> CameraSourceConfig?,
 ) {
 
-    fun resolve(camera: Camera): Playable = when (camera.streamType.uppercase()) {
-        "HLS" -> Playable.Exo(
-            factory = { mediaItem -> hlsSourceFor(camera, mediaItem) },
-            mimeType = MimeTypes.APPLICATION_M3U8,
-        )
-        "DASH" -> Playable.Exo(
-            factory = { mediaItem -> dashSourceFor(camera, mediaItem) },
-            mimeType = MimeTypes.APPLICATION_MPD,
-        )
-        "MJPEG" -> Playable.Mjpeg(mjpegFrames(camera))
-        "RTSP" -> Playable.Unsupported(id.nusantara.cctv.R.string.unsupported_rtsp)
-        else -> Playable.Unsupported(
-            id.nusantara.cctv.R.string.unsupported_format,
-            camera.streamType,
-        )
+    /**
+     * Resolve kamera menjadi Playable. WAJIB dipanggil dari Dispatchers.IO —
+     * bootstrap sesi portal (network blocking) berjalan di sini; dipanggil dari
+     * main thread akan NetworkOnMainThreadException dan sesi gagal dibentuk.
+     */
+    fun resolve(camera: Camera): Playable {
+        val config = sourceConfigOf(camera.sourceId)
+        if (config?.bootstrapUrl != null) {
+            runCatching { http.ensureSession(config.bootstrapUrl, config.referer) }
+                .onFailure { android.util.Log.e("StreamEngine", "bootstrap gagal", it) }
+        }
+        return when (camera.streamType.uppercase()) {
+            "HLS" -> Playable.Exo(
+                factory = { mediaItem -> hlsSourceFor(camera, mediaItem) },
+                mimeType = MimeTypes.APPLICATION_M3U8,
+            )
+            "DASH" -> Playable.Exo(
+                factory = { mediaItem -> dashSourceFor(camera, mediaItem) },
+                mimeType = MimeTypes.APPLICATION_MPD,
+            )
+            "MJPEG" -> Playable.Mjpeg(mjpegFrames(camera))
+            "RTSP" -> Playable.Unsupported(id.nusantara.cctv.R.string.unsupported_rtsp)
+            else -> Playable.Unsupported(
+                id.nusantara.cctv.R.string.unsupported_format,
+                camera.streamType,
+            )
+        }
     }
 
     /**
@@ -70,13 +82,11 @@ class StreamEngine(
      */
     private fun headersFor(camera: Camera): Map<String, String> {
         val config = sourceConfigOf(camera.sourceId)
-        if (config?.bootstrapUrl != null) {
-            runCatching { http.ensureSession(config.bootstrapUrl, config.referer) }
-        }
         val headers = mutableMapOf<String, String>()
         config?.referer?.let { headers["Referer"] = it }
         http.cookieHeader(camera.streamUrl)?.let { headers["Cookie"] = it }
-        headers["User-Agent"] = USER_AGENT
+        // UA harus identik dengan bootstrap (SourceHttp) — sesi portal terikat UA
+        headers["User-Agent"] = SourceHttp.USER_AGENT
         return headers
     }
 
@@ -111,7 +121,7 @@ class StreamEngine(
             .apply {
                 config?.referer?.let { header("Referer", it) }
                 http.cookieHeader(camera.streamUrl)?.let { header("Cookie", it) }
-                header("User-Agent", USER_AGENT)
+                header("User-Agent", SourceHttp.USER_AGENT)
             }
             .build()
         return flow {
@@ -145,7 +155,7 @@ class StreamEngine(
                 .apply {
                     config?.referer?.let { header("Referer", it) }
                     http.cookieHeader(camera.streamUrl)?.let { header("Cookie", it) }
-                    header("User-Agent", USER_AGENT)
+                    header("User-Agent", SourceHttp.USER_AGENT)
                 }
                 .build()
             http.client.newCall(request).execute().use { response ->
@@ -168,10 +178,6 @@ class StreamEngine(
 
     private fun String.lstrip() = trimStart()
 
-    companion object {
-        const val USER_AGENT =
-            "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126.0 Mobile Safari/537.36"
-    }
 }
 
 /**

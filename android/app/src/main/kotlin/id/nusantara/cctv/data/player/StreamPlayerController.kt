@@ -8,10 +8,12 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import id.nusantara.cctv.data.model.Camera
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Jenis error pemutar; teks tampil di-resolve UI via resource string. */
 enum class PlayerError { NETWORK, UNAVAILABLE, PLAYBACK, SOURCE, MJPEG_INACTIVE, ENDED, UNSUPPORTED }
@@ -78,43 +80,48 @@ class StreamPlayerController(
 
     /** Mulai memutar [camera]; no-op bila sudah memutar kamera yang sama. */
     fun start(camera: Camera) {
-        if (startedForId == camera.id && exoPlayer != null) return
+        if (startedForId == camera.id && (exoPlayer != null || mjpegJob != null)) return
         startedForId = camera.id
         release()
-        when (val playable = engine.resolve(camera)) {
-            is Playable.Exo -> {
-                _ui.value = PlayerUi.Loading
-                val player = ExoPlayer.Builder(context).build()
-                exoPlayer = player
-                player.addListener(listener)
-                val mediaItem = MediaItem.fromUri(camera.streamUrl)
-                val source = runCatching { playable.factory(mediaItem) }.getOrElse { e ->
-                    _ui.value = PlayerUi.Error(PlayerError.SOURCE, detail = e.message)
-                    return
+        _ui.value = PlayerUi.Loading
+        // resolve + bootstrap sesi portal berjalan di IO (network blocking);
+        // ExoPlayer dibuat di thread utama setelahnya.
+        scope.launch {
+            val playable = withContext(Dispatchers.IO) { engine.resolve(camera) }
+            if (startedForId != camera.id) return@launch // dibatalkan release() saat resolve berjalan
+            when (playable) {
+                is Playable.Exo -> {
+                    val player = ExoPlayer.Builder(context).build()
+                    exoPlayer = player
+                    player.addListener(listener)
+                    val mediaItem = MediaItem.fromUri(camera.streamUrl)
+                    val source = runCatching { playable.factory(mediaItem) }.getOrElse { e ->
+                        _ui.value = PlayerUi.Error(PlayerError.SOURCE, detail = e.message)
+                        return@launch
+                    }
+                    player.setMediaSource(source)
+                    player.prepare()
+                    player.playWhenReady = true
                 }
-                player.setMediaSource(source)
-                player.prepare()
-                player.playWhenReady = true
-            }
-            is Playable.Mjpeg -> {
-                _ui.value = PlayerUi.Loading
-                mjpegJob = scope.launch {
-                    var emitted = false
-                    try {
-                        playable.frames.collect { bitmap ->
-                            emitted = true
-                            _ui.value = PlayerUi.MjpegFrame(bitmap)
+                is Playable.Mjpeg -> {
+                    mjpegJob = scope.launch {
+                        var emitted = false
+                        try {
+                            playable.frames.collect { bitmap ->
+                                emitted = true
+                                _ui.value = PlayerUi.MjpegFrame(bitmap)
+                            }
+                        } finally {
+                            if (!emitted) _ui.value = PlayerUi.Error(PlayerError.MJPEG_INACTIVE)
                         }
-                    } finally {
-                        if (!emitted) _ui.value = PlayerUi.Error(PlayerError.MJPEG_INACTIVE)
                     }
                 }
+                is Playable.Unsupported -> _ui.value = PlayerUi.Error(
+                    PlayerError.UNSUPPORTED,
+                    messageRes = playable.messageRes,
+                    messageArg = playable.arg,
+                )
             }
-            is Playable.Unsupported -> _ui.value = PlayerUi.Error(
-                PlayerError.UNSUPPORTED,
-                messageRes = playable.messageRes,
-                messageArg = playable.arg,
-            )
         }
     }
 

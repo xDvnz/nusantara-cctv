@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * DI manual (AppContainer): graf kecil, tanpa generator kode.
@@ -29,6 +30,10 @@ class CctvApp : Application() {
         container.appScope.launch {
             runCatching { container.catalogRepository.seedFromAssetsIfNeeded() }
                 .onFailure { android.util.Log.e("CctvApp", "seed gagal", it) }
+            // config sumber harus dimuat SETELAH seed — dipakai bootstrap sesi playback
+            runCatching { container.catalogRepository.sourcesOnce() }.onSuccess { list ->
+                list.forEach { container.putSourceConfig(it) }
+            }
         }
         container.appScope.launch {
             runCatching { container.catalogRepository.pruneHistory() }
@@ -63,19 +68,19 @@ class AppContainer(private val app: Application) {
 
     val catalogRepository = CatalogRepository(app, database, remoteCatalogUrl)
 
-    // Config sumber preloaded: dipakai StreamEngine sinkron saat playback, tanpa runBlocking.
+    // Config sumber preloaded: dipakai StreamEngine sinkron saat playback.
     private val sourceConfigs = java.util.concurrent.ConcurrentHashMap<String, CameraSourceConfig>()
+
+    fun putSourceConfig(config: CameraSourceConfig) {
+        sourceConfigs[config.sourceId] = config
+    }
 
     val streamEngine = StreamEngine(
         http = sourceHttp,
-        sourceConfigOf = { sourceId -> sourceConfigs[sourceId] },
+        sourceConfigOf = { sourceId ->
+            sourceConfigs[sourceId] ?: runBlocking(Dispatchers.IO) {
+                runCatching { catalogRepository.sourceConfig(sourceId) }.getOrNull()
+            }?.also { sourceConfigs[sourceId] = it }
+        },
     )
-
-    init {
-        appScope.launch {
-            catalogRepository.observeSources().collect { list ->
-                list.forEach { sourceConfigs[it.sourceId] = it }
-            }
-        }
-    }
 }

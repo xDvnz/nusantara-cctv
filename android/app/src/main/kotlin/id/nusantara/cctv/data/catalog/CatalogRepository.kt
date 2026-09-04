@@ -134,20 +134,22 @@ class CatalogRepository(
     }
 
     fun observeSources(): Flow<List<CameraSourceConfig>> = db.sourceDao().observeAll()
-        .map { list ->
-            list.map {
-                CameraSourceConfig(
-                    sourceId = it.sourceId,
-                    sourceName = it.sourceName,
-                    sourceUrl = it.sourceUrl,
-                    operator = it.operator,
-                    authNeededForStream = it.authNeededForStream,
-                    bootstrapUrl = it.bootstrapUrl,
-                    referer = it.referer,
-                    licenseNote = it.licenseNote,
-                )
-            }
-        }
+        .map { list -> list.map { it.toConfig() } }
+
+    /** Baca sekali (non-Flow) — dipakai preload startup agar playback awal punya config. */
+    suspend fun sourcesOnce(): List<CameraSourceConfig> =
+        db.sourceDao().observeAll().first().map { it.toConfig() }
+
+    private fun SourceEntity.toConfig() = CameraSourceConfig(
+        sourceId = sourceId,
+        sourceName = sourceName,
+        sourceUrl = sourceUrl,
+        operator = operator,
+        authNeededForStream = authNeededForStream,
+        bootstrapUrl = bootstrapUrl,
+        referer = referer,
+        licenseNote = licenseNote,
+    )
 
     suspend fun updateStatus(id: String, status: String, checkedAt: String) {
         db.cameraDao().updateStatus(id, status, checkedAt)
