@@ -1,0 +1,34 @@
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.keystore
+*.jks
+!debug.keystore
+android/.idea/
+android/captures/
+
+# Kotlin/Gradle
+*.class
+*.jar.php
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Data artifacts (regenerable via tools/)
+data/raw/
+data/validated_raw.json
+data/validation*.log
+data/shots/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+*.iml
+.vscode/

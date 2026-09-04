@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- malangkota.go.id tidak mengirim intermediate TLS cert (GeoTrust TLS RSA CA G1),
+     sehingga client Android standar gagal membangun chain. Intermediate publik
+     DigiCert di-bundle sebagai anchor tambahan. Bukan secret — cert publik. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <domain-config>
+        <domain includeSubdomains="true">cctv.malangkota.go.id</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/geotrust_tls_rsa_ca_g1" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

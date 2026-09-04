@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nusantara CCTV</string>
+    <string name="tab_home">Beranda</string>
+    <string name="tab_map">Peta</string>
+    <string name="tab_regions">Wilayah</string>
+    <string name="tab_search">Cari</string>
+    <string name="tab_favorites">Favorit</string>
+    <string name="offline_banner">Tidak ada koneksi internet. Metadata kamera tetap bisa dibuka; live stream butuh koneksi.</string>
+    <string name="error_player">Stream tidak dapat diputar. Kamera mungkin sedang offline.</string>
+    <string name="retry">Coba lagi</string>
+    <string name="open_in_map">Buka di peta</string>
+    <string name="favorite_add">Tambah favorit</string>
+    <string name="favorite_remove">Hapus favorit</string>
+    <string name="source_attribution">Sumber: %1$s (%2$s)</string>
+    <string name="sync_now">Sinkron katalog</string>
+    <string name="refresh_status">Periksa status</string>
+</resources>
