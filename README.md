@@ -4,6 +4,9 @@ Aplikasi **Android native** untuk memantau CCTV publik Indonesia yang ditayangka
 resmi oleh pemerintah daerah/lembaga. Bukan WebView — Jetpack Compose + Media3
 ExoPlayer + osmdroid.
 
+> **Untuk agent/pengembang yang meneruskan proyek ini:** baca [AGENTS.md](AGENTS.md) —
+> panduan serah terima lengkap (sejarah, arsitektur, jebakan teknis, prosedur rilis).
+
 > 481 kamera tervalidasi (466 online saat validasi terakhir), 5 provinsi,
 > 430 dengan koordinat exact dari API resmi pemda.
 
