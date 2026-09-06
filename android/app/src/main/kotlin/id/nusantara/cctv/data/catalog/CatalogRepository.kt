@@ -119,6 +119,9 @@ class CatalogRepository(
                 .sortedBy { cams -> entries.indexOfFirst { it.cameraId == cams.id } }
         }
 
+    /** true bila URL katalog remote dikonfigurasi (digunakan pull-to-refresh). */
+    fun hasRemoteCatalogUrl(): Boolean = !remoteCatalogUrl.isNullOrBlank()
+
     suspend fun sourceConfig(sourceId: String): CameraSourceConfig? {
         val entity = db.sourceDao().byId(sourceId) ?: return null
         return CameraSourceConfig(
@@ -170,6 +173,24 @@ class CatalogRepository(
     /** Hapus riwayat kamera yang sudah tak ada di katalog (panggilan periodik aplikasi). */
     suspend fun pruneHistory() {
         db.cameraHistoryDao().pruneOrphaned()
+    }
+
+    /**
+     * Pull-to-refresh (§12 user v2.0): cek status ulang kamera yang ditampilkan,
+     * satu batch kecil per refresh (bukan seluruh katalog) + sinkron katalog remote
+     * bila URL dikonfigurasi. Mengembalikan jumlah kamera yang statusnya berubah.
+     */
+    suspend fun refreshVisible(cameraIds: List<String>, engineProbe: suspend (Camera) -> String): Int {
+        var changed = 0
+        for (id in cameraIds.take(20)) {
+            val camera = db.cameraDao().byId(id) ?: continue
+            val status = engineProbe(camera.toModel())
+            if (status != camera.status) {
+                db.cameraDao().updateStatus(id, status, java.time.LocalDateTime.now().toString())
+                changed++
+            }
+        }
+        return changed
     }
 
     /**

@@ -40,6 +40,10 @@ class AboutViewModel(
     val sources: StateFlow<List<CameraSourceConfig>> = repository.observeSources()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
+    val cameraCount: StateFlow<Int> = repository.cameras
+        .map { it.size }
+        .stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
     val themeMode: StateFlow<ThemeMode> = prefs.preferences
         .map { it.themeMode }
         .stateIn(viewModelScope, SharingStarted.Lazily, ThemeMode.SYSTEM)

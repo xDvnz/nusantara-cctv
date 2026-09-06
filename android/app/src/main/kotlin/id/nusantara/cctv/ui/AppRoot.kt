@@ -121,6 +121,21 @@ fun AppRoot() {
                 navController = navController,
                 startDestination = Routes.HOME,
                 modifier = Modifier.fillMaxSize(),
+                enterTransition = {
+                    androidx.compose.animation.fadeIn(
+                        androidx.compose.animation.core.tween(220),
+                    ) + androidx.compose.animation.slideInVertically(
+                        androidx.compose.animation.core.tween(220),
+                    ) { it / 24 }
+                },
+                exitTransition = { androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) },
+                popEnterTransition = { androidx.compose.animation.fadeIn(androidx.compose.animation.core.tween(220)) },
+                popExitTransition = {
+                    androidx.compose.animation.fadeOut(androidx.compose.animation.core.tween(160)) +
+                        androidx.compose.animation.slideOutVertically(
+                            androidx.compose.animation.core.tween(220),
+                        ) { it / 24 }
+                },
             ) {
                 composable(Routes.HOME) {
                     HomeScreen(onCameraClick = { navController.navigate(Routes.camera(it.id)) })

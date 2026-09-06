@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -34,11 +35,26 @@ import id.nusantara.cctv.ui.components.CameraCard
 import id.nusantara.cctv.ui.components.StatusDot
 import id.nusantara.cctv.ui.factoryOf
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(onCameraClick: (Camera) -> Unit) {
+    val context = LocalContext.current
+    val container = (context.applicationContext as id.nusantara.cctv.CctvApp).container
     val vm: HomeViewModel = viewModel(factory = factoryOf { HomeViewModel(it.appContainer.catalogRepository) })
     val state by vm.uiState.collectAsState()
+    val refreshing by vm.refreshing.collectAsState()
 
+    androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+        isRefreshing = refreshing,
+        onRefresh = {
+            vm.refresh { cam ->
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    container.streamEngine.probeStatus(cam)
+                }
+            }
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -86,6 +102,7 @@ fun HomeScreen(onCameraClick: (Camera) -> Unit) {
         }
         item { SectionTitle(stringResource(R.string.section_recent_checked)) }
         items(state.recentlyChecked, key = { "recent-${it.id}" }) { CameraCard(it, onCameraClick) }
+    }
     }
 }
 

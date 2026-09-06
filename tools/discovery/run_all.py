@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from common import log  # noqa: E402
 
-FETCHERS = ["malangkota", "jogjakota", "palembang", "banjarmasin", "bandungkota"]
+FETCHERS = ["malangkota", "jogjakota", "palembang", "banjarmasin", "bandungkota", "bukittinggi", "kedirikota"]
 
 
 def main():

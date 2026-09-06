@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.map
 
 private val Context.appPrefs by preferencesDataStore("settings")
 
-/** Mode tampilan aplikasi. */
-enum class ThemeMode { SYSTEM, LIGHT, DARK }
+/**
+ * Mode tema. SYSTEM = ikut perangkat, LIGHT/DARK = kecerahan tetap,
+ * CYBER/MONOCHROME = palet tetap ala monitoring center.
+ */
+enum class ThemeMode { SYSTEM, LIGHT, DARK, CYBER, MONOCHROME }
 
 /** Bahasa antarmuka. */
 enum class AppLocale(val tag: String) {
@@ -27,6 +30,7 @@ data class AppPreferences(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val locale: AppLocale = AppLocale.ID,
     val remoteCatalogUrl: String = "",
+    val mapLayer: String = "DEFAULT",
 )
 
 /**
@@ -38,6 +42,7 @@ class AppPreferencesRepository(private val context: Context) {
     private val KEY_THEME = stringPreferencesKey("theme_mode")
     private val KEY_LOCALE = stringPreferencesKey("locale")
     private val KEY_CATALOG_URL = stringPreferencesKey("remote_catalog_url")
+    private val KEY_MAP_LAYER = stringPreferencesKey("map_layer")
 
     val preferences: Flow<AppPreferences> = context.appPrefs.data.map { p ->
         AppPreferences(
@@ -45,6 +50,7 @@ class AppPreferencesRepository(private val context: Context) {
                 ?: ThemeMode.SYSTEM,
             locale = p[KEY_LOCALE]?.let { AppLocale.fromTag(it) } ?: AppLocale.ID,
             remoteCatalogUrl = p[KEY_CATALOG_URL].orEmpty(),
+            mapLayer = p[KEY_MAP_LAYER].orEmpty().ifEmpty { "DEFAULT" },
         )
     }
 
@@ -58,6 +64,10 @@ class AppPreferencesRepository(private val context: Context) {
 
     suspend fun setRemoteCatalogUrl(url: String) {
         context.appPrefs.edit { it[KEY_CATALOG_URL] = url }
+    }
+
+    suspend fun setMapLayer(layer: String) {
+        context.appPrefs.edit { it[KEY_MAP_LAYER] = layer }
     }
 
     suspend fun snapshot(): AppPreferences = preferences.first()

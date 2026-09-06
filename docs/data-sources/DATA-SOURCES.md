@@ -13,6 +13,9 @@ Seluruh katalog diambil read-only dengan interval terbatas.
 | palembang | cctv.palembang.go.id | Diskominfo/Dishub Kota Palembang | Sumatera Selatan | PUBLIC_API | 30 online | GET /api/cctv → GeoJSON-ish dgn koordinat exact, kecamatan, kelurahan; HLS stream.palembang.go.id (fMP4 HLS). **Server agresif throttl** → pipeline proses serial 1 rps. Koordinat exact. |
 | banjarmasin | atcs.banjarmasinkota.go.id | Dishub Kota Banjarmasin | Kalimantan Selatan | PUBLIC_API | 30 online | GET /api/public/cameras/wall → [{code,name,stream,poster}]; HLS /stream/{code}/index.m3u8 1280x720, **fMP4** (EXT-X-MAP + segment .mp4). Tanpa koordinat → administrative_only. |
 | bandungkota | atcs-dishub.bandung.go.id | Dishub Kota Bandung | Jawa Barat | OFFICIAL_PORTAL | 21 online | Area id dari homepage; POST /ajax/cctv-list (XHR) → id kamera; POST /ajax/cctv-info → src HLS :1990/{Nama}/index.m3u8 (704x576). Tanpa koordinat → administrative_only. |
+| bukittinggi | cctv.bukittinggikota.go.id | Diskominfo Kota Bukittinggi | Sumatera Barat | PUBLIC_API | 47 (45 online v5) | GET /api/get-list-camera di hls.bukittinggikota.go.id → JSON lokasi & listCamera; HLS H.264/AAC MPEG-TS sync byte 0x47. Koordinat exact (lintang/bujur). |
+| kedirikota | dishub.kedirikota.go.id/live-streaming-atcs/ | Dishub Kota Kediri | Jawa Timur | PUBLIC_DIRECT | 17 (12 online v5) | Server MediaMTX di pplterpadu.kedirikota.go.id:8888/{slug}/index.m3u8; HLS H.264/AAC MPEG-TS sync byte 0x47. Koordinat exact persimpangan utama Kota Kediri. |
+
 
 ## Sumber teridentifikasi TIDAK masuk katalog (dengan alasan)
 

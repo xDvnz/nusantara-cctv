@@ -14,8 +14,8 @@ android {
         applicationId = "id.nusantara.cctv"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4        // naikkan +1 setiap rilis
-        versionName = "1.3"    // minor fix → 1.1, major update → 2.0
+        versionCode = 5        // naikkan +1 setiap rilis
+        versionName = "2.0"    // major: tema kustom, map layers, pull-to-refresh, katalog diperluas
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // URL katalog remote untuk sync (PHASE 8). Kosong = hanya seed bundel.

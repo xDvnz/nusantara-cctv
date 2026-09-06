@@ -22,6 +22,10 @@ class HomeViewModel(private val repository: CatalogRepository) : ViewModel() {
     private val state = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = state
 
+    /** true selama pull-to-refresh berjalan. */
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing
+
     init {
         viewModelScope.launch {
             repository.cameras.collect { cameras ->
@@ -44,6 +48,32 @@ class HomeViewModel(private val repository: CatalogRepository) : ViewModel() {
         viewModelScope.launch {
             repository.observeRecentHistory(limit = 6).collect { cams ->
                 state.value = state.value.copy(history = cams)
+            }
+        }
+    }
+
+    /**
+     * Pull-to-refresh: sinkron katalog remote bila URL dikonfigurasi; bila tidak,
+     * probe ulang status kamera yang sedang tampil (favorit + riwayat + terbaru).
+     */
+    fun refresh(engineProbe: suspend (Camera) -> String) {
+        if (_refreshing.value) return
+        viewModelScope.launch {
+            _refreshing.value = true
+            try {
+                val hasRemote = repository.hasRemoteCatalogUrl()
+                if (hasRemote) {
+                    runCatching { repository.syncFromRemote() }
+                } else {
+                    val visible = buildSet {
+                        addAll(state.value.history.map { it.id })
+                        addAll(state.value.favorites.map { it.id })
+                        addAll(state.value.recentlyChecked.map { it.id })
+                    }.toList()
+                    runCatching { repository.refreshVisible(visible, engineProbe) }
+                }
+            } finally {
+                _refreshing.value = false
             }
         }
     }

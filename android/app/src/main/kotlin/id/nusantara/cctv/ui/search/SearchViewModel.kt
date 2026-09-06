@@ -48,6 +48,22 @@ class SearchViewModel(
     private val _state = MutableStateFlow(SearchUiState())
     val state: StateFlow<SearchUiState> = _state
 
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing
+
+    /** Pull-to-refresh: muat ulang halaman pertama hasil saat ini. */
+    fun refresh() {
+        if (_refreshing.value) return
+        viewModelScope.launch {
+            _refreshing.value = true
+            try {
+                reload()
+            } finally {
+                _refreshing.value = false
+            }
+        }
+    }
+
     private var loadedCount = 0
 
     init {

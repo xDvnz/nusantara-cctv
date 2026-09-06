@@ -88,7 +88,8 @@
     <string name="language_en">English</string>
     <string name="about_catalog_section">Katalog</string>
     <string name="catalog_version_label">Versi: %1$s • Dibuat: %2$s</string>
-    <string name="catalog_remote_hint">Katalog dibundel bersama aplikasi. Isi URL katalog remote (JSON skema sama) untuk memperbarui daftar kamera tanpa update APK. Kosong = hanya seed bundel.</string>
+    <string name="catalog_remote_hint">Katalog dibundel bersama aplikasi. Isi URL katalog remote (JSON skema sama) untuk memperbarui daftar kamera tanpa update APK. Kosong = hanya seed bundel. Contoh nyata yang bisa langsung dicoba: https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json — host statis apa pun yang mendukung HTTPS &amp; CORS bekerja (GitHub raw, Gist, Netlify, jsDelivr).</string>
+    <string name="catalog_url_example">https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json</string>
     <string name="catalog_url_label">URL katalog remote (opsional)</string>
     <string name="save_sync_button">Simpan &amp; sinkron</string>
     <string name="syncing">Menyinkronkan…</string>
@@ -96,6 +97,9 @@
     <string name="sync_up_to_date">Katalog sudah versi terbaru.</string>
     <string name="about_sources_section">Sumber data &amp; atribusi</string>
     <string name="about_sources_note">Seluruh stream berasal dari portal publik resmi pemerintah daerah. Aplikasi hanya menampilkan tautan publik; tidak merekam dan tidak mendistribusikan ulang. Hormati ketentuan tiap operator.</string>
+    <string name="about_sources_count">%1$d sumber resmi • %2$d kamera</string>
+    <string name="sources_expand">Lihat detail sumber</string>
+    <string name="sources_collapse">Sembunyikan detail sumber</string>
 
     <!-- Cek pembaruan -->
     <string name="update_dialog_title">Versi baru tersedia</string>
@@ -114,4 +118,15 @@
     <string name="update_latest_ok">Aplikasi sudah versi terbaru (v%1$s).</string>
     <string name="update_check_failed">Pemeriksaan gagal. Periksa koneksi lalu coba lagi.</string>
     <string name="download_button">Buka halaman unduh</string>
+    <string name="theme_cyber">Cyber</string>
+    <string name="theme_monochrome">Monokrom</string>
+    <string name="theme_material_you">Material You</string>
+    <string name="map_layer_title">Lapisan peta</string>
+    <string name="map_layer_default">Standar (OSM)</string>
+    <string name="map_layer_satellite">Satelit</string>
+    <string name="map_layer_dark">Gelap</string>
+    <string name="map_layer_terrain">Medan</string>
+    <string name="search_result_count">%1$d hasil • %2$d filter</string>
+    <string name="search_clear_filters">Hapus filter</string>
+    <string name="search_clear">Hapus teks pencarian</string>
 </resources>

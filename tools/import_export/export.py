@@ -64,6 +64,32 @@ SOURCE_META = {
         "license_note": "Ditayangkan publik oleh Pemkot Banjarmasin untuk pantauan lalu lintas. Tidak untuk redistribusi ulang tanpa izin.",
         "confidence": 0.9,
     },
+    "bukittinggikota": {
+        "source_name": "CCTV Kota Bukittinggi (Dishub Kota Bukittinggi)",
+        "source_url": "https://cctv.bukittinggikota.go.id",
+        "operator": "Pemerintah Kota Bukittinggi",
+        "province": "Sumatera Barat",
+        "city_regency": "Kota Bukittinggi",
+        "access_type": "PUBLIC_API",
+        "auth_needed_for_stream": False,
+        "bootstrap_url": None,
+        "referer": "https://cctv.bukittinggikota.go.id/",
+        "license_note": "Ditayangkan publik oleh Pemkot Bukittinggi untuk pantauan lalu lintas. Tidak untuk redistribusi ulang tanpa izin.",
+        "confidence": 0.9,
+    },
+    "kedirikota": {
+        "source_name": "Portal ATCS Kota Kediri (Dishub Kota Kediri)",
+        "source_url": "https://dishub.kedirikota.go.id/live-streaming-atcs/",
+        "operator": "Pemerintah Kota Kediri",
+        "province": "Jawa Timur",
+        "city_regency": "Kota Kediri",
+        "access_type": "OFFICIAL_PORTAL",
+        "auth_needed_for_stream": False,
+        "bootstrap_url": None,
+        "referer": "https://dishub.kedirikota.go.id/",
+        "license_note": "Ditayangkan publik oleh Pemkot Kediri untuk pantauan lalu lintas. Tidak untuk redistribusi ulang tanpa izin.",
+        "confidence": 0.85,
+    },
     "bandungkota": {
         "source_name": "ATCS Dishub Kota Bandung",
         "source_url": "https://atcs-dishub.bandung.go.id",
@@ -77,6 +103,19 @@ SOURCE_META = {
         "license_note": "Ditayangkan publik oleh Dishub Kota Bandung untuk pantauan lalu lintas. Tidak untuk redistribusi ulang tanpa izin.",
         "confidence": 0.9,
     },
+    "kedirikota": {
+        "source_name": "Portal ATCS Kota Kediri (Dishub Kota Kediri)",
+        "source_url": "https://dishub.kedirikota.go.id/live-streaming-atcs/",
+        "operator": "Dinas Perhubungan Pemerintah Kota Kediri",
+        "province": "Jawa Timur",
+        "city_regency": "Kota Kediri",
+        "access_type": "PUBLIC_DIRECT",
+        "auth_needed_for_stream": False,
+        "bootstrap_url": None,
+        "referer": "https://dishub.kedirikota.go.id/",
+        "license_note": "Ditayangkan publik oleh Dishub Kota Kediri untuk pantauan lalu lintas kota. Tidak untuk redistribusi ulang tanpa izin.",
+        "confidence": 0.95,
+    },
 }
 
 KODE_PROV = {
@@ -85,12 +124,20 @@ KODE_PROV = {
     "Sumatera Selatan": "SUS",
     "Kalimantan Selatan": "KLS",
     "Jawa Barat": "JBR",
+    "Sumatera Barat": "SUT",
+    "Sumatera Barat": "SMB",
 }
 
 
 def normalize(source_id, cam, validated):
     meta = SOURCE_META[source_id]
-    name = clean(cam.get("name") or cam.get("cctv_title")) or "Kamera tanpa nama"
+    name = (
+        clean(cam.get("name"))
+        or clean(cam.get("cctv_title"))
+        or clean(cam.get("nama_kamera"))
+        or clean(cam.get("nama_lokasi"))
+        or "Kamera tanpa nama"
+    )
     if source_id == "malangkota":
         pid = clean(cam.get("stream_id")) or slug(name)
         district = clean(cam.get("nama_kecamatan"))
@@ -119,13 +166,27 @@ def normalize(source_id, cam, validated):
         location = name
         lat = None
         lng = None
-    else:  # bandungkota
+    elif source_id == "bandungkota":
         pid = clean(cam.get("cctv_id")) or slug(name)
         district = None
         subdistrict = None
         location = clean(cam.get("desc")) or name
         lat = None
         lng = None
+    elif source_id == "bukittinggikota":
+        pid = clean(cam.get("stream_url")) or slug(name)
+        district = None
+        subdistrict = None
+        location = clean(cam.get("nama_lokasi")) or name
+        lat = as_float(cam.get("latitude"))
+        lng = as_float(cam.get("longitude"))
+    else:  # kedirikota
+        pid = clean(cam.get("pid")) or slug(name)
+        district = None
+        subdistrict = None
+        location = name
+        lat = as_float(cam.get("latitude"))
+        lng = as_float(cam.get("longitude"))
     stream_url = clean(cam.get("stream_url")) or ""
     status = validated.get("status", "UNKNOWN")
     checked = validated.get("last_checked")
@@ -192,6 +253,10 @@ def main():
             key = item.get("code")
         elif sid == "bandungkota":
             key = item.get("cctv_id")
+        elif sid == "bukittinggikota":
+            key = item.get("stream_url")
+        elif sid == "kedirikota":
+            key = item.get("pid")
         if sid and key:
             validated[(sid, str(key))] = item
 
@@ -228,8 +293,17 @@ def main():
             elif sid == "banjarmasin":
                 pid = str(cam.get("code"))
                 link = cam.get("stream")
-            else:  # bandungkota
+            elif sid == "bukittinggikota":
+                pid = str(cam.get("stream_url"))
+                link = cam.get("stream_url")
+            elif sid == "kedirikota":
+                pid = str(cam.get("pid"))
+                link = cam.get("stream_url")
+            elif sid == "bandungkota":
                 pid = str(cam.get("cctv_id"))
+                link = cam.get("stream_url")
+            else:  # kedirikota
+                pid = str(cam.get("pid"))
                 link = cam.get("stream_url")
             if not link:
                 skipped_no_url += 1

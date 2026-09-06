@@ -48,11 +48,35 @@ SOURCES = {
         "workers": 4,
         "delay": 0.2,
     },
+    "bukittinggikota": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://cctv.bukittinggikota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.2,
+    },
+    "kedirikota": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://dishub.kedirikota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.2,
+    },
     "bandungkota": {
         "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://atcs-dishub.bandung.go.id/"}),
         "session": None,
         "workers": 4,
         "delay": 0.2,
+    },
+    "bukittinggi": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://cctv.bukittinggikota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.1,
+    },
+    "kedirikota": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://dishub.kedirikota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.1,
     },
 }
 
