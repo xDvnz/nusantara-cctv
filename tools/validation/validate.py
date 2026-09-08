@@ -66,18 +66,6 @@ SOURCES = {
         "workers": 4,
         "delay": 0.2,
     },
-    "bukittinggi": {
-        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://cctv.bukittinggikota.go.id/"}),
-        "session": None,
-        "workers": 4,
-        "delay": 0.1,
-    },
-    "kedirikota": {
-        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://dishub.kedirikota.go.id/"}),
-        "session": None,
-        "workers": 4,
-        "delay": 0.1,
-    },
 }
 
 _sessions = {}

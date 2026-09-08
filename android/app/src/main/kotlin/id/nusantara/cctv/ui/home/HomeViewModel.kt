@@ -61,10 +61,8 @@ class HomeViewModel(private val repository: CatalogRepository) : ViewModel() {
         viewModelScope.launch {
             _refreshing.value = true
             try {
-                val hasRemote = repository.hasRemoteCatalogUrl()
-                if (hasRemote) {
-                    runCatching { repository.syncFromRemote() }
-                } else {
+                val synced = runCatching { repository.syncFromRemote() }.isSuccess
+                if (!synced) {
                     val visible = buildSet {
                         addAll(state.value.history.map { it.id })
                         addAll(state.value.favorites.map { it.id })

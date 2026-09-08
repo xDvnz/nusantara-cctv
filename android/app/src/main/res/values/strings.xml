@@ -88,13 +88,19 @@
     <string name="language_en">English</string>
     <string name="about_catalog_section">Katalog</string>
     <string name="catalog_version_label">Versi: %1$s • Dibuat: %2$s</string>
-    <string name="catalog_remote_hint">Katalog dibundel bersama aplikasi. Isi URL katalog remote (JSON skema sama) untuk memperbarui daftar kamera tanpa update APK. Kosong = hanya seed bundel. Contoh nyata yang bisa langsung dicoba: https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json — host statis apa pun yang mendukung HTTPS &amp; CORS bekerja (GitHub raw, Gist, Netlify, jsDelivr).</string>
+    <string name="catalog_remote_hint">Override lanjutan menerima JSON katalog berskema sama melalui HTTPS. Kosongkan untuk memakai katalog resmi.</string>
     <string name="catalog_url_example">https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json</string>
     <string name="catalog_url_label">URL katalog remote (opsional)</string>
     <string name="save_sync_button">Simpan &amp; sinkron</string>
     <string name="syncing">Menyinkronkan…</string>
     <string name="sync_updated">Katalog diperbarui dari server.</string>
     <string name="sync_up_to_date">Katalog sudah versi terbaru.</string>
+    <string name="catalog_official_active">Katalog resmi aktif.</string>
+    <string name="catalog_alternate_active">Override katalog aktif.</string>
+    <string name="catalog_show_advanced">Tampilkan override lanjutan</string>
+    <string name="catalog_hide_advanced">Sembunyikan override lanjutan</string>
+    <string name="catalog_reset_official">Pulihkan katalog resmi</string>
+    <string name="catalog_url_https_required">URL katalog harus HTTPS yang valid.</string>
     <string name="about_sources_section">Sumber data &amp; atribusi</string>
     <string name="about_sources_note">Seluruh stream berasal dari portal publik resmi pemerintah daerah. Aplikasi hanya menampilkan tautan publik; tidak merekam dan tidak mendistribusikan ulang. Hormati ketentuan tiap operator.</string>
     <string name="about_sources_count">%1$d sumber resmi • %2$d kamera</string>
@@ -126,6 +132,8 @@
     <string name="map_layer_satellite">Satelit</string>
     <string name="map_layer_dark">Gelap</string>
     <string name="map_layer_terrain">Medan</string>
+    <string name="map_layer_selected">Dipilih</string>
+    <string name="map_open_camera">Buka kamera</string>
     <string name="search_result_count">%1$d hasil • %2$d filter</string>
     <string name="search_clear_filters">Hapus filter</string>
     <string name="search_clear">Hapus teks pencarian</string>

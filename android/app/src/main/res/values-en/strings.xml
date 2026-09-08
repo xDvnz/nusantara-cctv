@@ -88,13 +88,19 @@
     <string name="language_en">English</string>
     <string name="about_catalog_section">Catalog</string>
     <string name="catalog_version_label">Version: %1$s • Generated: %2$s</string>
-    <string name="catalog_remote_hint">The catalog ships with the app. Fill in a remote catalog URL (same JSON schema) to update the camera list without an APK update. Empty = bundled seed only. Real example to try: https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json — any static host with HTTPS &amp; CORS works (GitHub raw, Gist, Netlify, jsDelivr).</string>
+    <string name="catalog_remote_hint">The advanced override accepts the same catalog JSON schema over HTTPS. Leave blank to use the official catalog.</string>
     <string name="catalog_url_example">https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json</string>
     <string name="catalog_url_label">Remote catalog URL (optional)</string>
     <string name="save_sync_button">Save &amp; sync</string>
     <string name="syncing">Syncing…</string>
     <string name="sync_updated">Catalog updated from server.</string>
     <string name="sync_up_to_date">Catalog is already up to date.</string>
+    <string name="catalog_official_active">Official catalog active.</string>
+    <string name="catalog_alternate_active">Catalog override active.</string>
+    <string name="catalog_show_advanced">Show advanced override</string>
+    <string name="catalog_hide_advanced">Hide advanced override</string>
+    <string name="catalog_reset_official">Restore official catalog</string>
+    <string name="catalog_url_https_required">Catalog URL must be valid HTTPS.</string>
     <string name="about_sources_section">Data sources &amp; attribution</string>
     <string name="about_sources_note">All streams come from official local-government public portals. The app only links public feeds; it records nothing and redistributes nothing. Respect each operator\'s terms.</string>
     <string name="about_sources_count">%1$d official sources &#8226; %2$d cameras</string>
@@ -126,6 +132,8 @@
     <string name="map_layer_satellite">Satellite</string>
     <string name="map_layer_dark">Dark</string>
     <string name="map_layer_terrain">Terrain</string>
+    <string name="map_layer_selected">Selected</string>
+    <string name="map_open_camera">Open camera</string>
     <string name="search_result_count">%1$d results • %2$d filters</string>
     <string name="search_clear_filters">Clear filters</string>
     <string name="search_clear">Clear search text</string>

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 
 /**
  * DI manual (AppContainer): graf kecil, tanpa generator kode.
@@ -30,6 +31,12 @@ class CctvApp : Application() {
         container.appScope.launch {
             runCatching { container.catalogRepository.seedFromAssetsIfNeeded() }
                 .onFailure { android.util.Log.e("CctvApp", "seed gagal", it) }
+            runCatching {
+                container.catalogRepository.setAlternateCatalogUrl(
+                    container.preferencesRepository.preferences.first().remoteCatalogUrl,
+                )
+                container.catalogRepository.syncFromRemote()
+            }.onFailure { android.util.Log.w("CctvApp", "sync katalog gagal", it) }
             // config sumber harus dimuat SETELAH seed — dipakai bootstrap sesi playback
             runCatching { container.catalogRepository.sourcesOnce() }.onSuccess { list ->
                 list.forEach { container.putSourceConfig(it) }

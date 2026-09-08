@@ -56,6 +56,7 @@ fun AboutScreen() {
     val locale by vm.locale.collectAsState()
     val context = LocalContext.current
     var sourcesExpanded by remember { mutableStateOf(false) }
+    var catalogAdvancedExpanded by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -183,27 +184,49 @@ fun AboutScreen() {
             }
         }
 
-        // Katalog remote (opsional, penjelasan + contoh host)
         item {
             AboutCard {
                 Text(stringResource(R.string.about_catalog_section), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    stringResource(R.string.catalog_remote_hint),
+                    stringResource(
+                        if (state.usingOfficialCatalog) R.string.catalog_official_active
+                        else R.string.catalog_alternate_active,
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                OutlinedTextField(
-                    value = state.catalogUrl,
-                    onValueChange = vm::onCatalogUrlChange,
-                    label = { Text(stringResource(R.string.catalog_url_label)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                )
-                Button(onClick = vm::saveAndSync, enabled = !state.syncing) {
+                TextButton(onClick = { catalogAdvancedExpanded = !catalogAdvancedExpanded }) {
                     Text(
-                        if (state.syncing) stringResource(R.string.syncing)
-                        else stringResource(R.string.save_sync_button),
+                        stringResource(
+                            if (catalogAdvancedExpanded) R.string.catalog_hide_advanced
+                            else R.string.catalog_show_advanced,
+                        ),
                     )
+                }
+                AnimatedVisibility(visible = catalogAdvancedExpanded) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(
+                            stringResource(R.string.catalog_remote_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        OutlinedTextField(
+                            value = state.catalogUrl,
+                            onValueChange = vm::onCatalogUrlChange,
+                            label = { Text(stringResource(R.string.catalog_url_label)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                        )
+                        Button(onClick = vm::saveAndSync, enabled = !state.syncing) {
+                            Text(
+                                if (state.syncing) stringResource(R.string.syncing)
+                                else stringResource(R.string.save_sync_button),
+                            )
+                        }
+                        TextButton(onClick = vm::resetToOfficialAndSync, enabled = !state.syncing) {
+                            Text(stringResource(R.string.catalog_reset_official))
+                        }
+                    }
                 }
                 state.message?.let {
                     Text(

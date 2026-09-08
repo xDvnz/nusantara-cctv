@@ -14,13 +14,15 @@ android {
         applicationId = "id.nusantara.cctv"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5        // naikkan +1 setiap rilis
-        versionName = "2.0"    // major: tema kustom, map layers, pull-to-refresh, katalog diperluas
+        versionCode = 6
+        versionName = "3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // URL katalog remote untuk sync (PHASE 8). Kosong = hanya seed bundel.
-        // Bukan secret — endpoint katalog publik; ganti via build flavor bila perlu.
-        buildConfigField("String", "REMOTE_CATALOG_URL", "\"\"")
+        buildConfigField(
+            "String",
+            "REMOTE_CATALOG_URL",
+            "\"https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json\"",
+        )
     }
 
     signingConfigs {

@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 data class AboutUiState(
     val catalogUrl: String = "",
+    val usingOfficialCatalog: Boolean = true,
     val syncing: Boolean = false,
     val message: String? = null,
     val isError: Boolean = false,
@@ -57,7 +58,11 @@ class AboutViewModel(
 
     init {
         viewModelScope.launch {
-            _state.value = _state.value.copy(catalogUrl = prefs.snapshot().remoteCatalogUrl)
+            val alternateUrl = prefs.snapshot().remoteCatalogUrl
+            _state.value = _state.value.copy(
+                catalogUrl = alternateUrl,
+                usingOfficialCatalog = alternateUrl.isBlank(),
+            )
         }
     }
 
@@ -76,9 +81,46 @@ class AboutViewModel(
     fun saveAndSync() {
         val url = _state.value.catalogUrl.trim()
         viewModelScope.launch {
-            _state.value = _state.value.copy(syncing = true, message = null)
+            when (repository.setAlternateCatalogUrl(url)) {
+                is id.nusantara.cctv.data.catalog.CatalogUrlResult.Rejected -> {
+                    _state.value = _state.value.copy(
+                        message = context.getString(id.nusantara.cctv.R.string.catalog_url_https_required),
+                        isError = true,
+                    )
+                    return@launch
+                }
+                id.nusantara.cctv.data.catalog.CatalogUrlResult.Accepted -> Unit
+            }
+            _state.value = _state.value.copy(syncing = true, message = null, isError = false)
             prefs.setRemoteCatalogUrl(url)
-            repository.updateRemoteUrl(url)
+            try {
+                val result = repository.syncFromRemote()
+                _state.value = _state.value.copy(
+                    syncing = false,
+                    usingOfficialCatalog = url.isBlank(),
+                    message = if (result == CatalogRepository.SyncResult.UPDATED) {
+                        context.getString(id.nusantara.cctv.R.string.sync_updated)
+                    } else {
+                        context.getString(id.nusantara.cctv.R.string.sync_up_to_date)
+                    },
+                )
+            } catch (e: CatalogSyncException) {
+                _state.value = _state.value.copy(syncing = false, message = e.message, isError = true)
+            }
+        }
+    }
+
+    fun resetToOfficialAndSync() {
+        viewModelScope.launch {
+            repository.resetCatalogUrl()
+            prefs.setRemoteCatalogUrl("")
+            _state.value = _state.value.copy(
+                catalogUrl = "",
+                usingOfficialCatalog = true,
+                syncing = true,
+                message = null,
+                isError = false,
+            )
             try {
                 val result = repository.syncFromRemote()
                 _state.value = _state.value.copy(

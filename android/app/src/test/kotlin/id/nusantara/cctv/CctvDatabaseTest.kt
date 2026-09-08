@@ -154,10 +154,10 @@ class CctvDatabaseTest {
         val repository = CatalogRepository(context, db, initialRemoteUrl = null)
         repository.seedFromAssetsIfNeeded()
         val total = db.cameraDao().count()
-        // katalog bundel v6: 540 kamera (519 online)
-        assertEquals(540, total)
+        // katalog bundel v13: 509 kamera (488 online)
+        assertEquals(509, total)
         val online = db.cameraDao().countByStatus("ONLINE")
-        assertEquals(519, online)
+        assertEquals(488, online)
         assertTrue(db.cameraDao().withCoordinates().size > 400)
     }
 
@@ -166,6 +166,6 @@ class CctvDatabaseTest {
         val repository = CatalogRepository(context, db, initialRemoteUrl = null)
         repository.seedFromAssetsIfNeeded()
         val version = repository.catalogVersion()
-        assertEquals(6, version)
+        assertEquals(13, version)
     }
 }

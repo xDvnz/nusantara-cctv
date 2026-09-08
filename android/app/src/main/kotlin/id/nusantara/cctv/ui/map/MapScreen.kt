@@ -1,13 +1,30 @@
 package id.nusantara.cctv.ui.map
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -19,7 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
@@ -45,7 +66,6 @@ class MapViewModel(
     private val repository: CatalogRepository,
     private val prefs: id.nusantara.cctv.data.prefs.AppPreferencesRepository,
 ) : ViewModel() {
-
     private val camerasFlow = MutableStateFlow<List<MapCameraItem>>(emptyList())
     val cameras: StateFlow<List<MapCameraItem>> = camerasFlow
 
@@ -53,34 +73,27 @@ class MapViewModel(
         .map { runCatching { MapLayer.valueOf(it.mapLayer) }.getOrDefault(MapLayer.DEFAULT) }
         .stateIn(viewModelScope, SharingStarted.Lazily, MapLayer.DEFAULT)
 
-    fun setMapLayer(layer: MapLayer) {
-        viewModelScope.launch { prefs.setMapLayer(layer.name) }
-    }
-
     private val all = MutableStateFlow<List<Camera>>(emptyList())
 
     init {
         viewModelScope.launch {
             repository.cameras.collect { list ->
                 all.value = list
-                camerasFlow.value = list
-                    .filter { it.latitude != null && it.longitude != null }
-                    .map {
-                        MapCameraItem(
-                            id = it.id,
-                            name = it.cameraName,
-                            lat = it.latitude!!,
-                            lng = it.longitude!!,
-                            status = it.status,
-                        )
-                    }
+                camerasFlow.value = list.filter { it.latitude != null && it.longitude != null }.map {
+                    MapCameraItem(it.id, it.cameraName, it.latitude!!, it.longitude!!, it.status)
+                }
             }
         }
+    }
+
+    fun setMapLayer(layer: MapLayer) {
+        viewModelScope.launch { prefs.setMapLayer(layer.name) }
     }
 
     fun cameraById(id: String): Camera? = all.value.firstOrNull { it.id == id }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(onCameraClick: (Camera) -> Unit) {
     val vm: MapViewModel = viewModel(factory = factoryOf {
@@ -88,15 +101,15 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
     })
     val items by vm.cameras.collectAsState()
     val mapLayer by vm.mapLayer.collectAsState()
-
-    // holder agar listener zoom/pan selalu membaca daftar terbaru
     val latestItems = remember { mutableStateOf(items) }
     latestItems.value = items
 
     var mapRef by remember { mutableStateOf<MapView?>(null) }
-    var layerMenuOpen by remember { mutableStateOf(false) }
+    var layerSheetOpen by remember { mutableStateOf(false) }
+    var selectedCamera by remember { mutableStateOf<Camera?>(null) }
+    val selectCamera: (Camera) -> Unit = { selectedCamera = it }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
@@ -107,51 +120,60 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
                     controller.setZoom(4.8)
                     controller.setCenter(GeoPoint(-2.5, 118.0))
                     mapRef = this
-                    attachClusterListener(this) { rebuildMarkers(this, latestItems.value, vm, onCameraClick) }
+                    attachClusterListener(this) { rebuildMarkers(this, latestItems.value, vm, selectCamera) }
                 }
             },
             update = { map ->
                 val wanted = MapLayers.tileSource(mapLayer)
-                if (map.tileProvider.tileSource !== wanted) {
-                    map.setTileSource(wanted)
-                }
-                rebuildMarkers(map, latestItems.value, vm, onCameraClick)
+                if (map.tileProvider.tileSource !== wanted) map.setTileSource(wanted)
+                rebuildMarkers(map, latestItems.value, vm, selectCamera)
             },
         )
-
-        // Tombol pilihan layer (kanan atas) — seperti pemilih peta pada aplikasi peta populer
-        androidx.compose.material3.FloatingActionButton(
-            onClick = { layerMenuOpen = true },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp),
+        FloatingActionButton(
+            onClick = { layerSheetOpen = true },
+            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp),
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ) {
-            Icon(
-                androidx.compose.material.icons.Icons.Filled.Layers,
-                contentDescription = stringResource(R.string.map_layer_title),
+            Icon(Icons.Filled.Layers, stringResource(R.string.map_layer_title))
+        }
+    }
+
+    if (layerSheetOpen) {
+        ModalBottomSheet(onDismissRequest = { layerSheetOpen = false }) {
+            Text(
+                stringResource(R.string.map_layer_title),
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                style = MaterialTheme.typography.titleLarge,
             )
-            androidx.compose.material3.DropdownMenu(
-                expanded = layerMenuOpen,
-                onDismissRequest = { layerMenuOpen = false },
+            MapLayer.entries.forEach { layer ->
+                LayerRow(layer, selected = layer == mapLayer) {
+                    vm.setMapLayer(layer)
+                    layerSheetOpen = false
+                }
+            }
+        }
+    }
+
+    selectedCamera?.let { camera ->
+        ModalBottomSheet(onDismissRequest = { selectedCamera = null }) {
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             ) {
-                MapLayer.entries.forEach { layer ->
-                    androidx.compose.material3.DropdownMenuItem(
-                        text = { Text(stringResource(layer.labelRes)) },
-                        trailingIcon = {
-                            if (layer == mapLayer) {
-                                Icon(
-                                    androidx.compose.material.icons.Icons.Filled.Check,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                        },
-                        onClick = {
-                            vm.setMapLayer(layer)
-                            layerMenuOpen = false
-                        },
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(camera.cameraName, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        "${camera.locationName}, ${camera.cityRegency}",
+                        style = MaterialTheme.typography.bodyMedium,
                     )
+                    Text(
+                        "${camera.sourceName} · ${camera.status}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(onClick = { onCameraClick(camera) }) {
+                        Text(stringResource(R.string.map_open_camera))
+                    }
                 }
             }
         }
@@ -160,10 +182,9 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
     LaunchedEffect(items) {
         mapRef?.let { map ->
             fitBounds(map, latestItems.value)
-            rebuildMarkers(map, latestItems.value, vm, onCameraClick)
+            rebuildMarkers(map, latestItems.value, vm, selectCamera)
         }
     }
-
     DisposableEffect(Unit) {
         onDispose {
             mapRef?.overlays?.clear()
@@ -173,11 +194,39 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
     }
 }
 
+@Composable
+private fun LayerRow(layer: MapLayer, selected: Boolean, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .semantics { role = Role.RadioButton }
+            .clickable(onClick = onClick)
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            Modifier.size(width = 52.dp, height = 36.dp)
+                .background(layerPreviewColor(layer), RoundedCornerShape(8.dp)),
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(stringResource(layer.labelRes), modifier = Modifier.weight(1f))
+        if (selected) Icon(Icons.Filled.Check, contentDescription = stringResource(R.string.map_layer_selected))
+    }
+}
+
+private fun layerPreviewColor(layer: MapLayer): Color = when (layer) {
+    MapLayer.DEFAULT -> Color(0xFF7FAF67)
+    MapLayer.SATELLITE -> Color(0xFF557B45)
+    MapLayer.DARK -> Color(0xFF30363D)
+    MapLayer.TERRAIN -> Color(0xFF927A50)
+}
+
 private fun rebuildMarkers(
     map: MapView,
     items: List<MapCameraItem>,
     vm: MapViewModel,
-    onCameraClick: (Camera) -> Unit,
+    onCameraSelected: (Camera) -> Unit,
 ) {
     map.overlays.removeAll { it is Marker }
     if (items.isEmpty()) {
@@ -185,8 +234,7 @@ private fun rebuildMarkers(
         return
     }
     val density = map.resources.displayMetrics.density
-    val clusterer = CameraClusterer()
-    val groups = clusterer.cluster(items, map.projection, cellPxOverride = (90 * density).toInt())
+    val groups = CameraClusterer().cluster(items, map.projection, cellPxOverride = (90 * density).toInt())
     for (group in groups) {
         val marker = Marker(map)
         marker.position = GeoPoint(group.centerLat, group.centerLng)
@@ -204,10 +252,7 @@ private fun rebuildMarkers(
             marker.icon = MarkerIcons.dot(item.status)
             marker.title = item.name
             marker.setOnMarkerClickListener { _, _ ->
-                vm.cameraById(item.id)?.let { camera ->
-                    onCameraClick(camera)
-                    true
-                } ?: false
+                vm.cameraById(item.id)?.let(onCameraSelected) != null
             }
         }
         map.overlays.add(marker)

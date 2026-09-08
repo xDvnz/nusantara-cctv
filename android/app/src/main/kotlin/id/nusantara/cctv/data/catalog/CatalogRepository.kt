@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import androidx.room.withTransaction
 
 private const val META_VERSION = "catalog_version"
@@ -27,18 +28,44 @@ private const val META_SEEDED = "catalog_seeded_at"
 /** Error sinkronisasi katalog yang bisa ditampilkan apa adanya di UI. */
 class CatalogSyncException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
+enum class CatalogUrlError { INVALID_URL, NON_HTTPS }
+sealed interface CatalogUrlResult {
+    data object Accepted : CatalogUrlResult
+    data class Rejected(val error: CatalogUrlError) : CatalogUrlResult
+}
+
 class CatalogRepository(
     private val context: Context,
     private val db: CctvDatabase,
     initialRemoteUrl: String?,
 ) {
+    companion object {
+        const val OFFICIAL_CATALOG_URL =
+            "https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json"
+    }
+
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     @Volatile
-    private var remoteCatalogUrl: String? = initialRemoteUrl
+    private var alternateCatalogUrl: String? = initialRemoteUrl?.trim()
+        ?.takeIf { it.isNotBlank() && it != OFFICIAL_CATALOG_URL }
 
-    fun updateRemoteUrl(url: String?) {
-        remoteCatalogUrl = url?.takeIf { it.isNotBlank() }
+    fun activeCatalogUrl(): String = alternateCatalogUrl ?: OFFICIAL_CATALOG_URL
+
+    fun setAlternateCatalogUrl(url: String?): CatalogUrlResult {
+        val value = url?.trim().orEmpty()
+        if (value.isEmpty()) {
+            alternateCatalogUrl = null
+            return CatalogUrlResult.Accepted
+        }
+        val parsed = value.toHttpUrlOrNull() ?: return CatalogUrlResult.Rejected(CatalogUrlError.INVALID_URL)
+        if (!parsed.isHttps) return CatalogUrlResult.Rejected(CatalogUrlError.NON_HTTPS)
+        alternateCatalogUrl = parsed.toString()
+        return CatalogUrlResult.Accepted
+    }
+
+    fun resetCatalogUrl() {
+        alternateCatalogUrl = null
     }
 
     val cameras: Flow<List<Camera>> = db.cameraDao().observeAll().map { list -> list.map { it.toModel() } }
@@ -119,8 +146,6 @@ class CatalogRepository(
                 .sortedBy { cams -> entries.indexOfFirst { it.cameraId == cams.id } }
         }
 
-    /** true bila URL katalog remote dikonfigurasi (digunakan pull-to-refresh). */
-    fun hasRemoteCatalogUrl(): Boolean = !remoteCatalogUrl.isNullOrBlank()
 
     suspend fun sourceConfig(sourceId: String): CameraSourceConfig? {
         val entity = db.sourceDao().byId(sourceId) ?: return null
@@ -194,14 +219,12 @@ class CatalogRepository(
     }
 
     /**
-     * §8/PHASE 8: sinkron katalog remote bila [remoteCatalogUrl] dikonfigurasi.
+     * Sinkron endpoint resmi atau override HTTPS tervalidasi.
      * Gagal jaringan/parse tidak merusak DB lokal — error dibungkus CatalogSyncException.
      */
     suspend fun syncFromRemote() = withContext(Dispatchers.IO) {
-        val url = remoteCatalogUrl?.takeIf { it.isNotBlank() }
-            ?: throw CatalogSyncException("URL katalog remote belum dikonfigurasi di Settings.")
         val current = db.catalogMetaDao().get(META_VERSION)?.toIntOrNull() ?: 0
-        val request = okhttp3.Request.Builder().url(url).build()
+        val request = okhttp3.Request.Builder().url(activeCatalogUrl()).build()
         try {
             okhttp3.OkHttpClient.Builder()
                 .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)

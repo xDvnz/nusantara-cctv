@@ -124,7 +124,6 @@ KODE_PROV = {
     "Sumatera Selatan": "SUS",
     "Kalimantan Selatan": "KLS",
     "Jawa Barat": "JBR",
-    "Sumatera Barat": "SUT",
     "Sumatera Barat": "SMB",
 }
 
@@ -181,10 +180,10 @@ def normalize(source_id, cam, validated):
         lat = as_float(cam.get("latitude"))
         lng = as_float(cam.get("longitude"))
     else:  # kedirikota
-        pid = clean(cam.get("pid")) or slug(name)
+        pid = clean(cam.get("id")) or slug(name)
         district = None
         subdistrict = None
-        location = name
+        location = clean(cam.get("location")) or name
         lat = as_float(cam.get("latitude"))
         lng = as_float(cam.get("longitude"))
     stream_url = clean(cam.get("stream_url")) or ""
@@ -256,7 +255,7 @@ def main():
         elif sid == "bukittinggikota":
             key = item.get("stream_url")
         elif sid == "kedirikota":
-            key = item.get("pid")
+            key = item.get("id")
         if sid and key:
             validated[(sid, str(key))] = item
 
@@ -297,7 +296,7 @@ def main():
                 pid = str(cam.get("stream_url"))
                 link = cam.get("stream_url")
             elif sid == "kedirikota":
-                pid = str(cam.get("pid"))
+                pid = str(cam.get("id"))
                 link = cam.get("stream_url")
             elif sid == "bandungkota":
                 pid = str(cam.get("cctv_id"))
