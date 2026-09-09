@@ -46,3 +46,10 @@ docs/superpowers/
 tools/parse_dump.py
 data/dump.xml
 data/shots*.png
+
+# Dokumen internal agent & script temp
+tools/refactor_*.py
+docs/COMPETITIVE_ANALYSIS.md
+docs/IMPLEMENTATION_SUMMARY.md
+docs/REDESIGN_PROPOSALS.md
+docs/UIUX_AUDIT.md
