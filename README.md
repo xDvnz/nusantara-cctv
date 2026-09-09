@@ -1,105 +1,95 @@
 # Nusantara CCTV Monitor
 
-Aplikasi **Android native** untuk memantau CCTV publik Indonesia yang ditayangkan
-resmi oleh pemerintah daerah/lembaga. Bukan WebView — Jetpack Compose + Media3
-ExoPlayer + osmdroid.
+Pantau CCTV lalu lintas publik dari seluruh Indonesia dalam satu aplikasi Android.
+Semua kamera berasal dari portal resmi pemerintah daerah — aplikasi ini hanya
+menayangkan ulang tautan publiknya, tanpa login, tanpa rekaman.
 
-> **Untuk agent/pengembang yang meneruskan proyek ini:** baca [AGENTS.md](AGENTS.md) —
-> panduan serah terima lengkap (sejarah, arsitektur, jebakan teknis, prosedur rilis).
+**674 kamera • 10 kota/kabupaten • 7 provinsi** (semua tervalidasi tayang)
 
-> 481 kamera tervalidasi (466 online saat validasi terakhir), 5 provinsi,
-> 430 dengan koordinat exact dari API resmi pemda.
+| Provinsi | Kota/Kabupaten | Kamera |
+|---|---|---|
+| Jawa Timur | Malang, Kediri | 270 |
+| DI Yogyakarta | Yogyakarta | 145 |
+| Kalimantan Selatan | Banjarmasin, Banjarbaru | 69 |
+| Jawa Barat | Bandung, Kuningan | 71 |
+| Jawa Tengah | Magelang | 45 |
+| Sumatera Barat | Bukittinggi | 45 |
+| Sumatera Selatan | Palembang | 29 |
 
-## Sumber data (lihat [docs/data-sources/DATA-SOURCES.md](docs/data-sources/DATA-SOURCES.md))
+## Unduh
 
-- Kota Malang — Diskominfo Kota Malang
-- Kota Yogyakarta — Jogja Command Center
-- Kota Palembang — Diskominfo/Dishub
-- Kota Banjarmasin — ATCS Dishub
-- Kota Bandung — ATCS Dishub
+Ambil APK terbaru dari [GitHub Releases](https://github.com/xDvnz/nusantara-cctv/releases):
 
-Hanya stream publik resmi. Tanpa bypass auth. Tanpa re-host.
+1. Unduh `NusantaraCCTV-v<versi>-release.apk` (file `release`, bukan `debug`).
+2. Buka file-nya di HP. Jika diminta, izinkan "Install dari sumber tidak dikenal".
+3. Selesai — tidak perlu akun, tidak ada iklan.
 
-## Cara build & install
+Butuh Android 8.0 (Oreo) ke atas. Update di atas versi lama langsung terpasang
+tanpa uninstall; favorit dan riwayat aman. Aplikasi juga otomatis memberi tahu
+saat versi baru tersedia (tab **Tentang → Pembaruan → Cek pembaruan**).
 
-### Prasyarat
-- JDK 17/21
-- Android SDK (platform 36, build-tools 35)
-- Perangkat Android 8.0+ (minSdk 26) atau emulator
+## Fitur
 
-### Langkah
+- **Live player** — HLS native (Media3), layar penuh, muat ulang, status kamera
+- **Peta** — marker + clustering, 4 basemap (OSM/Satelit/Gelap/Medan), panel
+  lapisan dan status bar koordinat
+- **Cari & filter** — nama/lokasi, provinsi, kota, kecamatan, status, operator
+- **Favorit & riwayat** — tersimpan di perangkat, tetap terbuka saat offline
+- **Tema** — Material You (ikut wallpaper), Terang, Gelap, Cyber, Monokrom
+- **Bahasa** — Indonesia & English
+- **Pull-to-refresh** — tarik ke bawah untuk menyegarkan status kamera
+
+## Sumber data
+
+Kamera bersumber dari portal publik resmi yang dikelola pemerintah daerah
+(Diskominfo/Dishub), antara lain:
+
+- [cctv.malangkota.go.id](https://cctv.malangkota.go.id/sebaran-cctv) — Kota Malang
+- [cctv.jogjakota.go.id](https://cctv.jogjakota.go.id) — Kota Yogyakarta
+- [cctv.palembang.go.id](https://cctv.palembang.go.id) — Kota Palembang
+- [atcs.banjarmasinkota.go.id](https://atcs.banjarmasinkota.go.id) — Kota Banjarmasin
+- [atcs-dishub.bandung.go.id](https://atcs-dishub.bandung.go.id) — Kota Bandung
+- [cctv.bukittinggikota.go.id](https://cctv.bukittinggikota.go.id) — Kota Bukittinggi
+- [dishub.kedirikota.go.id](https://dishub.kedirikota.go.id/live-streaming-atcs/) — Kota Kediri
+- [cctv.banjarbarukota.go.id](https://cctv.banjarbarukota.go.id) — Kota Banjarbaru
+- [cctv.kuningankab.go.id](https://cctv.kuningankab.go.id) — Kabupaten Kuningan
+- [cctv.magelangkota.go.id](https://cctv.magelangkota.go.id) — Kota Magelang
+
+Atribusi lengkap per kamera tampil di aplikasi (layar detail & tab Tentang).
+Peta oleh [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
+dan penyedia tile masing-masing.
+
+Aplikasi ini tidak berafiliasi dengan operator mana pun, tidak merekam, dan
+tidak menyimpan ulang siaran. Kamera bisa tayang hitam/putus jika operator
+mematikannya — gunakan tombol muat ulang atau coba kamera lain.
+
+## Build sendiri (untuk pengembang)
 
 ```bash
-# 1. Clone / masuk folder proyek
-cd android
-
-# 2. (opsional) sesuaikan sdk.dir di local.properties
-
-# 3. Build APK debug
-./gradlew assembleDebug
-
-# 4. Install ke perangkat yang terhubung
-./gradlew installDebug
-# atau
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-
-# 5. Launch
-adb shell am start -n id.nusantara.cctv/.MainActivity
+git clone https://github.com/xDvnz/nusantara-cctv.git
+cd nusantara-cctv/android
+# buat local.properties → sdk.dir=C:/path/to/Android/Sdk (forward slash!)
+./gradlew assembleDebug        # APK: app/build/outputs/apk/debug/
+./gradlew testDebugUnitTest lint
 ```
 
-### Menjalankan pipeline data (regenerasi katalog)
+Regenerasi katalog kamera (Python 3.11+):
 
 ```bash
-# 1. Ambil daftar kamera dari semua portal resmi (read-only, one-shot)
-python tools/discovery/run_all.py
-
-# 2. Validasi stream: manifest HLS + segment benar-benar video (TS/fMP4)
-python tools/validation/validate.py            # semua sumber
-python tools/validation/validate.py --only banjarmasin   # satu sumber
-python tools/validation/validate.py --limit 10 # smoke test
-
-# 3. Dedup + normalisasi + export katalog (JSON utk APK + CSV)
-python tools/import_export/export.py
+python tools/discovery/run_all.py      # ambil daftar kamera dari semua portal
+python tools/validation/validate.py    # uji stream (manifest + segmen video)
+python tools/import_export/export.py   # gabung + dedup → data/cameras.json
 ```
 
-Output katalog: `data/cameras.json` + `data/cameras.csv`.
-Katalog dipakai sebagai **seed bundel** di `android/app/src/main/assets/catalog/cameras.json`.
-Salin ulang setelah regenerasi:
-
-```bash
-cp data/cameras.json android/app/src/main/assets/catalog/cameras.json
-```
-
-### Update katalog tanpa update APK (PHASE 8)
-
-Host `data/cameras.json` di server statis, lalu isi URL-nya di **Pengaturan →
-URL katalog remote → Simpan & sinkron**. Aplikasi membandingkan
-`catalog_version`, mengganti DB secara transaksional, dan mempertahankan favorit.
-
-## Struktur proyek
-
-```text
-docs/           arsitektur, metodologi riset, sumber data, laporan fase
-tools/          pipeline Python (discovery / validation / export)
-data/           katalog hasil pipeline + log validasi
-android/        proyek Android (Kotlin, Compose, Media3, Room, osmdroid)
-```
-
-Dokumentasi lain: [ARCHITECTURE](docs/architecture/ARCHITECTURE.md) ·
-[DATA-SOURCES](docs/data-sources/DATA-SOURCES.md) ·
-[METHODOLOGY](docs/research/METHODOLOGY.md) · [TESTING](docs/TESTING.md) ·
-[PRIVACY](docs/PRIVACY.md) · [LICENSES](docs/LICENSES.md) ·
-[RELEASING](docs/RELEASING.md)
-
-## Download APK
-
-Rilis terbaru di [GitHub Releases](https://github.com/xDvnz/nusantara-cctv/releases):
-`NusantaraCCTV-v<versi>-release.apk` — install langsung, min. Android 8.0.
-Update kecil naik di angka belakang (1.0 → 1.1), update besar ganti angka depan (→ 2.0).
+Kebutuhan: JDK 17+, Android SDK (platform 36), Python 3.11+ dengan `requests`.
+Dokumentasi teknis lengkap ada di [docs/](docs/) — mulai dari
+[ARSITEKTUR](docs/architecture/ARCHITECTURE.md) dan
+[SUMBER DATA](docs/data-sources/DATA-SOURCES.md).
 
 ## Legal
 
-Feed berasal dari portal publik resmi pemda untuk pantauan lalu lintas.
-Aplikasi memutar langsung dari server sumber tanpa menyimpan/mendistribusikan ulang.
-Attribusi operator ditampilkan di setiap halaman kamera dan di Pengaturan.
-Redistribusi ulang stream memerlukan izin operator masing-masing.
+Feed CCTV tetap milik masing-masing pemerintah daerah dan ditayangkan untuk
+kepentingan publik. Proyek ini menayangkan ulang tautan publik apa adanya tanpa
+mengubah atau mendistribusikan ulang konten. Untuk penggunaan komersial atau
+redistribusi, hubungi operator terkait. Lisensi kode dan dependensi:
+[LICENSES](docs/LICENSES.md).
