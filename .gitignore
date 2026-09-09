@@ -35,3 +35,6 @@ Thumbs.db
 
 # Dokumen serah terima lokal — tidak di-commit (perintah user 2026-09-06)
 AGENTS.md
+
+# Worktree sisa agent lain
+.claude/
