@@ -46,24 +46,45 @@ private val LightScheme = lightColorScheme(
     onSurfaceVariant = Color(0xFF3F5A57),
 )
 
-private fun paletteScheme(p: id.nusantara.cctv.data.prefs.ThemePalette, dark: Boolean): ColorScheme {
-    val base = if (dark) DarkScheme else LightScheme
-    return base.copy(
-        primary = Color(p.primary.toInt()),
-        onPrimary = Color(p.onPrimary.toInt()),
-        primaryContainer = Color(p.primaryContainer.toInt()),
-        onPrimaryContainer = Color(p.onPrimaryContainer.toInt()),
-        secondary = Color(p.secondary.toInt()),
-        tertiary = Color(p.tertiary.toInt()),
-        background = Color(p.background.toInt()),
-        onBackground = Color(p.onBackground.toInt()),
-        surface = Color(p.surface.toInt()),
-        onSurface = Color(p.onSurface.toInt()),
-        surfaceVariant = Color(p.surfaceVariant.toInt()),
-        onSurfaceVariant = Color(p.onSurfaceVariant.toInt()),
-        error = Color(p.error.toInt()),
-        errorContainer = Color(p.errorContainer.toInt()),
-        outline = Color(p.outline.toInt()),
+private fun paletteScheme(p: id.nusantara.cctv.data.prefs.ThemePalette): ColorScheme {
+    fun c(v: Long) = Color(v.toInt())
+    return ColorScheme(
+        primary = c(p.primary),
+        onPrimary = c(p.onPrimary),
+        primaryContainer = c(p.primaryContainer),
+        onPrimaryContainer = c(p.onPrimaryContainer),
+        inversePrimary = c(p.primary).copy(alpha = 0.85f),
+        secondary = c(p.secondary),
+        onSecondary = c(p.onSecondary),
+        secondaryContainer = c(p.secondaryContainer),
+        onSecondaryContainer = c(p.onSecondaryContainer),
+        tertiary = c(p.tertiary),
+        onTertiary = c(p.onTertiary),
+        tertiaryContainer = c(p.secondaryContainer),
+        onTertiaryContainer = c(p.onSecondaryContainer),
+        background = c(p.background),
+        onBackground = c(p.onBackground),
+        surface = c(p.surface),
+        onSurface = c(p.onSurface),
+        surfaceVariant = c(p.surfaceVariant),
+        onSurfaceVariant = c(p.onSurfaceVariant),
+        surfaceTint = c(p.primary),
+        inverseSurface = c(p.onSurface),
+        inverseOnSurface = c(p.surface),
+        error = c(p.error),
+        onError = c(p.onPrimary),
+        errorContainer = c(p.errorContainer),
+        onErrorContainer = c(p.onBackground),
+        outline = c(p.outline),
+        outlineVariant = c(p.outline).copy(alpha = 0.5f),
+        scrim = Color.Black,
+        surfaceBright = c(p.surface),
+        surfaceDim = c(p.surfaceVariant),
+        surfaceContainer = c(p.surfaceVariant),
+        surfaceContainerHigh = c(p.surfaceVariant),
+        surfaceContainerHighest = c(p.surfaceVariant),
+        surfaceContainerLow = c(p.surface),
+        surfaceContainerLowest = c(p.background),
     )
 }
 
@@ -86,8 +107,9 @@ fun NusantaraTheme(
             } else if (systemDark) DarkScheme else LightScheme
         ThemeMode.LIGHT -> LightScheme
         ThemeMode.DARK -> DarkScheme
-        ThemeMode.CYBER -> paletteScheme(PresetPalettes.CYBER, dark = true)
-        ThemeMode.MONOCHROME -> paletteScheme(PresetPalettes.MONOCHROME, dark = systemDark)
+        ThemeMode.CYBER -> paletteScheme(PresetPalettes.CYBER)
+        ThemeMode.MONOCHROME ->
+            paletteScheme(if (systemDark) PresetPalettes.MONOCHROME_DARK else PresetPalettes.MONOCHROME)
     }
     MaterialTheme(colorScheme = scheme, typography = AppTypography, content = content)
 }

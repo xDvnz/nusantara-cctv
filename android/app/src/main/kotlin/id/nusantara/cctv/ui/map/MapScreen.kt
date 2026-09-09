@@ -1,5 +1,8 @@
 package id.nusantara.cctv.ui.map
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +19,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -41,7 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -93,7 +99,7 @@ class MapViewModel(
     fun cameraById(id: String): Camera? = all.value.firstOrNull { it.id == id }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(onCameraClick: (Camera) -> Unit) {
     val vm: MapViewModel = viewModel(factory = factoryOf {
@@ -109,6 +115,9 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
     var selectedCamera by remember { mutableStateOf<Camera?>(null) }
     val selectCamera: (Camera) -> Unit = { selectedCamera = it }
 
+    // status bar terminal (gaya OSIRIS): pusat peta + jumlah entitas — murah, update saat rebuild
+    var centerText by remember { mutableStateOf("--.----, ---.----") }
+
     Box(Modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -120,22 +129,39 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
                     controller.setZoom(4.8)
                     controller.setCenter(GeoPoint(-2.5, 118.0))
                     mapRef = this
-                    attachClusterListener(this) { rebuildMarkers(this, latestItems.value, vm, selectCamera) }
+                    attachClusterListener(this) {
+                        rebuildMarkers(this, latestItems.value, vm, selectCamera)
+                        centerText = "%.4f, %.4f".format(
+                            this.mapCenter.latitude, this.mapCenter.longitude,
+                        )
+                    }
                 }
             },
             update = { map ->
                 val wanted = MapLayers.tileSource(mapLayer)
                 if (map.tileProvider.tileSource !== wanted) map.setTileSource(wanted)
                 rebuildMarkers(map, latestItems.value, vm, selectCamera)
+                centerText = "%.4f, %.4f".format(map.mapCenter.latitude, map.mapCenter.longitude)
             },
         )
-        FloatingActionButton(
-            onClick = { layerSheetOpen = true },
-            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ) {
-            Icon(Icons.Filled.Layers, stringResource(R.string.map_layer_title))
-        }
+
+        // ===== Panel LAYERS (gaya OSIRIS): melayang kiri-atas =====
+        LayerPanel(
+            selected = mapLayer,
+            onSelect = vm::setMapLayer,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(12.dp),
+        )
+
+        // ===== Status bar bawah: LIVE / ENTITIES / koordinat =====
+        StatusBar(
+            entityCount = latestItems.value.size,
+            centerText = centerText,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(12.dp),
+        )
     }
 
     if (layerSheetOpen) {
@@ -183,6 +209,7 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
         mapRef?.let { map ->
             fitBounds(map, latestItems.value)
             rebuildMarkers(map, latestItems.value, vm, selectCamera)
+            centerText = "%.4f, %.4f".format(map.mapCenter.latitude, map.mapCenter.longitude)
         }
     }
     DisposableEffect(Unit) {
@@ -190,6 +217,141 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
             mapRef?.overlays?.clear()
             mapRef?.onDetach()
             mapRef = null
+        }
+    }
+}
+
+/**
+ * Panel melayang berisi tombol LAYERS (buka sheet pilihan basemap).
+ * Gaya referensi: kartu kecil bergaya terminal di atas peta.
+ */
+@Composable
+private fun LayerPanel(
+    selected: MapLayer,
+    onSelect: (MapLayer) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var open by remember { mutableStateOf(false) }
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        // tombol utama
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
+            ),
+        ) {
+            Row(
+                modifier = Modifier
+                    .clickable { open = !open }
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(
+                    Icons.Filled.Layers,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+                Text(
+                    stringResource(R.string.map_osiris_layers).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontFamily = FontFamily.Monospace,
+                    letterSpacing = 1.2.sp,
+                )
+            }
+        }
+
+        // pilihan basemap inline (muncul saat panel dibuka)
+        AnimatedVisibility(visible = open, enter = fadeIn(), exit = fadeOut()) {
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
+                ),
+            ) {
+                Column(Modifier.padding(vertical = 4.dp)) {
+                    MapLayer.entries.forEach { layer ->
+                        Row(
+                            modifier = Modifier
+                                .clickable { onSelect(layer) }
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                Modifier
+                                    .size(width = 34.dp, height = 22.dp)
+                                    .background(layerPreviewColor(layer), RoundedCornerShape(4.dp)),
+                            )
+                            Spacer(Modifier.width(10.dp))
+                            Text(
+                                stringResource(layer.labelRes),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontFamily = FontFamily.Monospace,
+                                modifier = Modifier.weight(1f),
+                            )
+                            if (layer == selected) {
+                                Icon(
+                                    Icons.Filled.Check,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Status bar bawah gaya terminal: LIVE + jumlah entitas + koordinat pusat. */
+@Composable
+private fun StatusBar(
+    entityCount: Int,
+    centerText: String,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                Modifier
+                    .size(8.dp)
+                    .background(Color(0xFF4CAF50), RoundedCornerShape(4.dp)),
+            )
+            Spacer(Modifier.width(6.dp))
+            Text(
+                stringResource(R.string.map_osiris_live).uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontFamily = FontFamily.Monospace,
+                color = Color(0xFF4CAF50),
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                stringResource(R.string.map_osiris_entities, entityCount),
+                style = MaterialTheme.typography.labelSmall,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                centerText,
+                style = MaterialTheme.typography.labelSmall,
+                fontFamily = FontFamily.Monospace,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -222,11 +384,12 @@ private fun layerPreviewColor(layer: MapLayer): Color = when (layer) {
     MapLayer.TERRAIN -> Color(0xFF927A50)
 }
 
+/** Gambar ulang marker/cluster sesuai zoom-viewport sekarang. */
 private fun rebuildMarkers(
     map: MapView,
     items: List<MapCameraItem>,
     vm: MapViewModel,
-    onCameraSelected: (Camera) -> Unit,
+    onCameraClick: (Camera) -> Unit,
 ) {
     map.overlays.removeAll { it is Marker }
     if (items.isEmpty()) {
@@ -234,7 +397,8 @@ private fun rebuildMarkers(
         return
     }
     val density = map.resources.displayMetrics.density
-    val groups = CameraClusterer().cluster(items, map.projection, cellPxOverride = (90 * density).toInt())
+    val clusterer = CameraClusterer()
+    val groups = clusterer.cluster(items, map.projection, cellPxOverride = (90 * density).toInt())
     for (group in groups) {
         val marker = Marker(map)
         marker.position = GeoPoint(group.centerLat, group.centerLng)
@@ -252,7 +416,10 @@ private fun rebuildMarkers(
             marker.icon = MarkerIcons.dot(item.status)
             marker.title = item.name
             marker.setOnMarkerClickListener { _, _ ->
-                vm.cameraById(item.id)?.let(onCameraSelected) != null
+                vm.cameraById(item.id)?.let { camera ->
+                    onCameraClick(camera)
+                    true
+                } ?: false
             }
         }
         map.overlays.add(marker)

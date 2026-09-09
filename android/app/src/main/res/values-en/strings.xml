@@ -137,4 +137,7 @@
     <string name="search_result_count">%1$d results • %2$d filters</string>
     <string name="search_clear_filters">Clear filters</string>
     <string name="search_clear">Clear search text</string>
+    <string name="map_osiris_layers">Layers</string>
+    <string name="map_osiris_live">LIVE</string>
+    <string name="map_osiris_entities">%1$d entities</string>
 </resources>

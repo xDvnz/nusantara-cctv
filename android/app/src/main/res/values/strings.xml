@@ -137,4 +137,7 @@
     <string name="search_result_count">%1$d hasil • %2$d filter</string>
     <string name="search_clear_filters">Hapus filter</string>
     <string name="search_clear">Hapus teks pencarian</string>
+    <string name="map_osiris_layers">Lapisan</string>
+    <string name="map_osiris_live">LIVE</string>
+    <string name="map_osiris_entities">%1$d entitas</string>
 </resources>
