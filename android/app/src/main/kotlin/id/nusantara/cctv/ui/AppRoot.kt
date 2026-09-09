@@ -35,7 +35,7 @@ import id.nusantara.cctv.BuildConfig
 import id.nusantara.cctv.CctvApp
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.update.UpdateInfo
-import id.nusantara.cctv.ui.about.AboutScreen
+import id.nusantara.cctv.ui.settings.SettingsScreen
 import id.nusantara.cctv.ui.components.OfflineBanner
 import id.nusantara.cctv.ui.detail.CameraDetailScreen
 import id.nusantara.cctv.ui.detail.FullscreenPlayerScreen
@@ -49,7 +49,7 @@ object Routes {
     const val MAP = "map"
     const val SEARCH = "search"
     const val FAVORITES = "favorites"
-    const val ABOUT = "about"
+    const val SETTINGS = "settings"
     const val CAMERA = "camera/{id}"
     const val PLAYER = "player/{id}"
     fun camera(id: String) = "camera/$id"
@@ -63,7 +63,6 @@ private val tabs = listOf(
     Tab(Routes.MAP, R.string.tab_map, Icons.Filled.Map),
     Tab(Routes.SEARCH, R.string.tab_search, Icons.Filled.Search),
     Tab(Routes.FAVORITES, R.string.tab_favorites, Icons.Filled.Favorite),
-    Tab(Routes.ABOUT, R.string.tab_about, Icons.Filled.Info),
 )
 
 @Composable
@@ -138,7 +137,10 @@ fun AppRoot() {
                 },
             ) {
                 composable(Routes.HOME) {
-                    HomeScreen(onCameraClick = { navController.navigate(Routes.camera(it.id)) })
+                    HomeScreen(
+                        onCameraClick = { navController.navigate(Routes.camera(it.id)) },
+                        onSettingsClick = { navController.navigate(Routes.SETTINGS) },
+                    )
                 }
                 composable(Routes.MAP) {
                     MapScreen(onCameraClick = { navController.navigate(Routes.camera(it.id)) })
@@ -149,8 +151,8 @@ fun AppRoot() {
                 composable(Routes.FAVORITES) {
                     FavoritesScreen(onCameraClick = { navController.navigate(Routes.camera(it.id)) })
                 }
-                composable(Routes.ABOUT) {
-                    AboutScreen()
+                composable(Routes.SETTINGS) {
+                    SettingsScreen()
                 }
                 composable(Routes.CAMERA) { entry ->
                     val id = entry.arguments?.getString("id").orEmpty()

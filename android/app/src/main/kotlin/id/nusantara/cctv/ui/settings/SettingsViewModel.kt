@@ -1,4 +1,4 @@
-package id.nusantara.cctv.ui.about
+package id.nusantara.cctv.ui.settings
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class AboutUiState(
+data class SettingsUiState(
     val catalogUrl: String = "",
     val usingOfficialCatalog: Boolean = true,
     val syncing: Boolean = false,
@@ -28,7 +28,7 @@ data class AboutUiState(
     val updateAvailable: id.nusantara.cctv.data.update.UpdateInfo? = null,
 )
 
-class AboutViewModel(
+class SettingsViewModel(
     private val context: Context,
     private val prefs: AppPreferencesRepository,
     private val repository: CatalogRepository,
@@ -53,8 +53,8 @@ class AboutViewModel(
         .map { it.locale }
         .stateIn(viewModelScope, SharingStarted.Lazily, AppLocale.ID)
 
-    private val _state = MutableStateFlow(AboutUiState())
-    val state: StateFlow<AboutUiState> = _state
+    private val _state = MutableStateFlow(SettingsUiState())
+    val state: StateFlow<SettingsUiState> = _state
 
     init {
         viewModelScope.launch {

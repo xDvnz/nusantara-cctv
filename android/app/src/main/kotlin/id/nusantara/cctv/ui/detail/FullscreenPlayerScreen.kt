@@ -65,8 +65,19 @@ fun FullscreenPlayerScreen(cameraId: String, onBack: () -> Unit) {
     DisposableEffect(Unit) {
         val activity = context as? Activity
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        // D5: immersive — sembunyikan system bars, swipe tepi untuk tampil sementara
+        activity?.window?.let { window ->
+            val controller = androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+            controller.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
         onDispose {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            activity?.window?.let { window ->
+                androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+                    .show(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            }
             vm.controller.release()
         }
     }

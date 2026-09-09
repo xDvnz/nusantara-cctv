@@ -37,12 +37,17 @@ data class ClusterGroup(
  * kelompokkan per sel [cellPx]. Sel berisi >1 kamera jadi cluster dengan count.
  * Rebuild saat zoom/pan (MapListener), bukan tiap frame.
  */
-class CameraClusterer(
-    private val cellPx: Int = 90,
-) {
-    fun cluster(items: List<MapCameraItem>, projection: Projection, cellPxOverride: Int? = null): List<ClusterGroup> {
+class CameraClusterer {
+    fun cluster(items: List<MapCameraItem>, projection: Projection, zoomLevel: Double): List<ClusterGroup> {
         if (items.isEmpty()) return emptyList()
-        val cell = cellPxOverride ?: cellPx
+        // C2: cell size dinamis per zoom — zoom jauh = cluster besar per provinsi,
+        // zoom dekat = individual markers.
+        val cell = when {
+            zoomLevel < 6.0 -> 200
+            zoomLevel < 10.0 -> 90
+            zoomLevel < 14.0 -> 50
+            else -> 30
+        }
         val grid = HashMap<Pair<Int, Int>, MutableList<MapCameraItem>>()
         for (item in items) {
             val p = projection.toPixels(GeoPoint(item.lat, item.lng), null)

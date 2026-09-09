@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.nusantara.cctv.ui.theme.Spacing
 import id.nusantara.cctv.CctvApp
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.catalog.CatalogRepository
@@ -79,8 +80,8 @@ fun FavoritesScreen(onCameraClick: (Camera) -> Unit) {
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(Spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
             item {
                 Text(

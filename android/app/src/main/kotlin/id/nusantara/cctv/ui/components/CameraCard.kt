@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import id.nusantara.cctv.ui.theme.Spacing
 import id.nusantara.cctv.data.model.Camera
 
 @Composable
@@ -29,11 +30,11 @@ fun CameraCard(camera: Camera, onClick: (Camera) -> Unit, modifier: Modifier = M
                 indication = androidx.compose.material3.ripple(),
             ) { onClick(camera) },
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.md)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 StatusDot(camera.status)
                 Text(

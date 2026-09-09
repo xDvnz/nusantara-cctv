@@ -115,6 +115,24 @@ interface CameraDao {
     @Query("SELECT * FROM cameras WHERE status = :status")
     suspend fun byStatus(status: String): List<CameraEntity>
 
+    @Query(
+        """SELECT * FROM cameras
+        WHERE cameraName LIKE '%' || :query || '%'
+           OR locationName LIKE '%' || :query || '%'
+           OR cityRegency LIKE '%' || :query || '%'
+        ORDER BY status, cameraName LIMIT :limit"""
+    )
+    suspend fun searchSuggestions(query: String, limit: Int): List<CameraEntity>
+
+    @Query(
+        """SELECT DISTINCT cityRegency FROM cameras
+        WHERE cityRegency LIKE '%' || :query || '%'
+        UNION SELECT DISTINCT province FROM cameras
+        WHERE province LIKE '%' || :query || '%'
+        LIMIT :limit"""
+    )
+    suspend fun searchLocations(query: String, limit: Int): List<String>
+
     @Query("SELECT DISTINCT province FROM cameras ORDER BY province")
     fun observeProvinces(): Flow<List<String>>
 

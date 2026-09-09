@@ -102,6 +102,7 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.18")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")

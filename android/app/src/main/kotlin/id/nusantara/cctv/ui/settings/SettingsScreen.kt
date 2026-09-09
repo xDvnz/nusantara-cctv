@@ -1,4 +1,4 @@
-package id.nusantara.cctv.ui.about
+package id.nusantara.cctv.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.nusantara.cctv.ui.theme.Spacing
 import id.nusantara.cctv.BuildConfig
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.prefs.AppLocale
@@ -42,12 +43,12 @@ import id.nusantara.cctv.ui.factoryOf
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AboutScreen() {
-    val vm: AboutViewModel = viewModel(factory = factoryOf { extras ->
+fun SettingsScreen() {
+    val vm: SettingsViewModel = viewModel(factory = factoryOf { extras ->
         val app = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]
             as android.app.Application
         val container = extras.appContainer
-        AboutViewModel(app, container.preferencesRepository, container.catalogRepository, container.updateChecker)
+        SettingsViewModel(app, container.preferencesRepository, container.catalogRepository, container.updateChecker)
     })
     val state by vm.state.collectAsState()
     val version by vm.version.collectAsState()
@@ -60,14 +61,14 @@ fun AboutScreen() {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(Spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(Spacing.md),
     ) {
-        item { Text(stringResource(R.string.about_title), style = MaterialTheme.typography.headlineSmall) }
+        item { Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall) }
 
         // Aplikasi + versi
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.about_app_section), style = MaterialTheme.typography.titleMedium)
                 Text(
                     stringResource(R.string.about_version) + ": " + BuildConfig.VERSION_NAME,
@@ -87,7 +88,7 @@ fun AboutScreen() {
 
         // Tampilan: tema + bahasa
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.about_appearance_section), style = MaterialTheme.typography.titleMedium)
 
                 Text(
@@ -95,7 +96,7 @@ fun AboutScreen() {
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     FilterChip(
                         selected = themeMode == ThemeMode.SYSTEM,
                         onClick = { vm.setThemeMode(ThemeMode.SYSTEM) },
@@ -128,7 +129,7 @@ fun AboutScreen() {
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     FilterChip(
                         selected = locale == AppLocale.ID,
                         onClick = {
@@ -151,7 +152,7 @@ fun AboutScreen() {
 
         // Pembaruan
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.update_section), style = MaterialTheme.typography.titleMedium)
                 Button(onClick = vm::checkForUpdate, enabled = !state.updateChecking) {
                     Text(
@@ -185,7 +186,7 @@ fun AboutScreen() {
         }
 
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.about_catalog_section), style = MaterialTheme.typography.titleMedium)
                 Text(
                     stringResource(
@@ -204,7 +205,7 @@ fun AboutScreen() {
                     )
                 }
                 AnimatedVisibility(visible = catalogAdvancedExpanded) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                         Text(
                             stringResource(R.string.catalog_remote_hint),
                             style = MaterialTheme.typography.bodySmall,
@@ -241,7 +242,7 @@ fun AboutScreen() {
 
         // Sumber data & atribusi — SATU kartu ringkas, detail bisa dibuka
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.about_sources_section), style = MaterialTheme.typography.titleMedium)
                 Text(
                     stringResource(
@@ -264,7 +265,7 @@ fun AboutScreen() {
                     )
                 }
                 AnimatedVisibility(visible = sourcesExpanded) {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                         sources.forEach { source ->
                             Column {
                                 Text(source.sourceName, style = MaterialTheme.typography.titleMedium)
@@ -283,7 +284,7 @@ fun AboutScreen() {
 
         // Pengembang
         item {
-            AboutCard {
+            SettingsCard {
                 Text(stringResource(R.string.about_developer_section), style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.about_developer_name), style = MaterialTheme.typography.bodyMedium)
                 Text(
@@ -303,12 +304,12 @@ fun AboutScreen() {
 
 /** Kartu standar — semua kartu About memakai ini agar lebar/elevasi konsisten. */
 @Composable
-private fun AboutCard(content: @Composable () -> Unit) {
+private fun SettingsCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.padding(Spacing.lg), verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
             content()
         }
     }

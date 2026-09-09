@@ -25,6 +25,10 @@ data class SearchUiState(
     val query: String = "",
     val filters: SearchFilters = SearchFilters(),
     val results: List<Camera> = emptyList(),
+    val groupedResults: Map<String, List<Camera>> = emptyMap(),
+    val recentSearches: List<String> = emptyList(),
+    val matchingCameras: List<Camera> = emptyList(),
+    val matchingLocations: List<String> = emptyList(),
     val provinces: List<String> = emptyList(),
     val cities: List<String> = emptyList(),
     val districts: List<String> = emptyList(),
@@ -37,6 +41,7 @@ data class SearchUiState(
 class SearchViewModel(
     private val cameraDao: CameraDao,
     repository: CatalogRepository,
+    private val prefsRepository: id.nusantara.cctv.data.prefs.AppPreferencesRepository,
 ) : ViewModel() {
 
     companion object {
@@ -50,6 +55,9 @@ class SearchViewModel(
 
     private val _refreshing = MutableStateFlow(false)
     val refreshing: StateFlow<Boolean> = _refreshing
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     /** Pull-to-refresh: muat ulang halaman pertama hasil saat ini. */
     fun refresh() {
@@ -76,6 +84,20 @@ class SearchViewModel(
         viewModelScope.launch {
             query.debounce(250).collect { q ->
                 _state.value = _state.value.copy(query = q)
+                if (q.isBlank()) {
+                    _state.value = _state.value.copy(matchingCameras = emptyList(), matchingLocations = emptyList())
+                } else {
+                    val cams = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        cameraDao.searchSuggestions(q, 5)
+                    }
+                    val locs = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        cameraDao.searchLocations(q, 5)
+                    }
+                    _state.value = _state.value.copy(
+                        matchingCameras = cams.map { it.toModel() },
+                        matchingLocations = locs,
+                    )
+                }
                 reload()
             }
         }
@@ -109,8 +131,13 @@ class SearchViewModel(
         viewModelScope.launch {
             val page = queryDb(PAGE_SIZE, loadedCount)
             loadedCount += page.size
+            val merged = _state.value.groupedResults.toMutableMap()
+            page.groupBy { it.province }.forEach { (province, cams) ->
+                merged[province] = (merged[province] ?: emptyList()) + cams
+            }
             _state.value = _state.value.copy(
                 results = _state.value.results + page,
+                groupedResults = merged,
                 loadingMore = false,
                 endReached = page.size < PAGE_SIZE,
             )
@@ -120,10 +147,19 @@ class SearchViewModel(
     private suspend fun reload() {
         loadedCount = 0
         val page = queryDb(PAGE_SIZE, 0)
+        _isLoading.value = false
         _state.value = _state.value.copy(
             results = page,
+            groupedResults = page.groupBy { it.province },
             endReached = page.size < PAGE_SIZE,
         )
+    }
+
+    fun onSearchSubmit(query: String) {
+        viewModelScope.launch {
+            prefsRepository.addRecentSearch(query)
+            _state.value = _state.value.copy(recentSearches = prefsRepository.getRecentSearches())
+        }
     }
 
     private suspend fun queryDb(limit: Int, offset: Int): List<Camera> {

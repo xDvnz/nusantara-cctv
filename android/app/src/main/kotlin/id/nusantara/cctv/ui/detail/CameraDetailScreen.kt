@@ -33,6 +33,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +49,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Surface
+import id.nusantara.cctv.ui.theme.Shapes
+import id.nusantara.cctv.ui.theme.Spacing
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.model.Camera
 import id.nusantara.cctv.data.player.PlayerUi
@@ -173,80 +186,186 @@ fun CameraDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .verticalScroll(rememberScrollState()),
         ) {
+            // ===== Quick actions row (D4): Save | Share | Fullscreen | Refresh =====
+            val context = androidx.compose.ui.platform.LocalContext.current
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                    .padding(Spacing.lg),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
-                OutlinedButton(onClick = onFullscreen, modifier = Modifier.height(40.dp)) {
-                    Icon(Icons.Filled.Fullscreen, contentDescription = null)
-                    Text("  " + stringResource(R.string.fullscreen_button))
+                OutlinedButton(
+                    onClick = { if (cam != null) vm.toggleFavorite() },
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = Spacing.xs),
+                ) {
+                    Icon(
+                        if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Spacer(Modifier.width(Spacing.xs))
+                    Text(stringResource(if (isFavorite) R.string.action_saved else R.string.action_save), maxLines = 1)
                 }
-                OutlinedButton(onClick = { cam.let(vm::retry) }, modifier = Modifier.height(40.dp)) {
-                    Icon(Icons.Filled.Refresh, contentDescription = null)
-                    Text("  " + stringResource(R.string.reload_button))
+                OutlinedButton(
+                    onClick = { cam?.let { shareCamera(it, context) } },
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = Spacing.xs),
+                ) {
+                    Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(Spacing.xs))
+                    Text(stringResource(R.string.action_share), maxLines = 1)
                 }
-                OutlinedButton(onClick = { cam.let(vm::refreshStatus) }, modifier = Modifier.height(40.dp)) {
-                    Text(stringResource(R.string.check_status_button))
+                OutlinedButton(
+                    onClick = onFullscreen,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = Spacing.xs),
+                ) {
+                    Icon(Icons.Filled.Fullscreen, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(Spacing.xs))
+                    Text(stringResource(R.string.fullscreen_button), maxLines = 1)
+                }
+                OutlinedButton(
+                    onClick = { cam?.let(vm::refreshStatus) },
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = Spacing.xs),
+                ) {
+                    Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(Spacing.xs))
+                    Text(stringResource(R.string.action_refresh), maxLines = 1)
                 }
             }
 
-            Card {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        StatusDot(cam.status)
-                        Text(
-                            "  ${cam.status}" + (cam.lastChecked?.let {
-                                " • " + stringResource(R.string.checked_at, it)
-                            } ?: ""),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    Text(cam.locationName, style = MaterialTheme.typography.bodyMedium)
+            // ===== Essential info (selalu tampil) =====
+            Column(
+                modifier = Modifier.padding(horizontal = Spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(Spacing.xs),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    StatusDot(cam.status)
                     Text(
-                        listOfNotNull(cam.district, cam.subdistrict, cam.cityRegency, cam.province)
-                            .joinToString(" • "),
+                        "  ${cam.status}" + (cam.lastChecked?.let {
+                            " • " + stringResource(R.string.checked_at, it)
+                        } ?: ""),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    if (cam.latitude != null && cam.longitude != null) {
-                        Text(
-                            stringResource(
-                                R.string.coordinates_label,
-                                "%.6f".format(cam.latitude),
-                                "%.6f".format(cam.longitude),
-                                cam.locationAccuracy,
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        TextButton(onClick = onOpenMap) {
-                            Text(stringResource(R.string.open_in_map))
-                        }
-                    }
                 }
-            }
-
-            Card {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(cam.cameraName, style = MaterialTheme.typography.titleLarge)
+                if (!cam.district.isNullOrBlank()) {
                     Text(
-                        stringResource(R.string.source_attribution, cam.sourceName, cam.operator),
-                        style = MaterialTheme.typography.bodySmall,
+                        cam.district,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+                Text("${cam.cityRegency} • ${cam.province}", style = MaterialTheme.typography.bodyMedium)
+                Surface(
+                    shape = Shapes.small,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                ) {
                     Text(
-                        cam.termsOfUse,
+                        cam.operator,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = Spacing.sm, vertical = Spacing.xs),
                     )
                 }
             }
+
+            // ===== Technical details (collapsible, B3) =====
+            var showTechnical by remember { mutableStateOf(false) }
+            Column(Modifier.padding(horizontal = Spacing.lg)) {
+                TextButton(
+                    onClick = { showTechnical = !showTechnical },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(
+                        stringResource(
+                            if (showTechnical) R.string.hide_technical_details
+                            else R.string.show_technical_details,
+                        ),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+                AnimatedVisibility(visible = showTechnical) {
+                    Column(
+                        modifier = Modifier.padding(top = Spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+                    ) {
+                        MetadataRow(stringResource(R.string.metadata_stream_type), cam.streamType)
+                        MetadataRow(
+                            stringResource(R.string.metadata_stream_url),
+                            cam.streamUrl.take(50) + if (cam.streamUrl.length > 50) "…" else "",
+                        )
+                        MetadataRow(stringResource(R.string.metadata_source), cam.sourceName)
+                        MetadataRow(stringResource(R.string.metadata_portal_url), cam.sourceUrl)
+                        if (cam.latitude != null && cam.longitude != null) {
+                            MetadataRow(
+                                stringResource(R.string.metadata_coordinates),
+                                "%.6f, %.6f".format(cam.latitude, cam.longitude),
+                            )
+                        }
+                        if (cam.confidenceScore > 0) {
+                            MetadataRow(
+                                stringResource(R.string.metadata_confidence),
+                                "%.0f%%".format(cam.confidenceScore * 100),
+                            )
+                        }
+                        if (cam.publicIdentifier.isNotBlank()) {
+                            MetadataRow(stringResource(R.string.metadata_camera_id), cam.publicIdentifier)
+                        }
+                        Text(
+                            cam.termsOfUse,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            // ===== Buka di peta =====
+            if (cam.latitude != null && cam.longitude != null) {
+                OutlinedButton(
+                    onClick = onOpenMap,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Spacing.lg),
+                ) {
+                    Icon(Icons.Filled.Map, contentDescription = null)
+                    Spacer(Modifier.width(Spacing.sm))
+                    Text(stringResource(R.string.open_in_map))
+                }
+            }
+            Spacer(Modifier.height(Spacing.xl))
         }
+    }
+}
+
+private fun shareCamera(camera: Camera, context: android.content.Context) {
+    val shareText = buildString {
+        appendLine("CCTV: ${camera.cameraName}")
+        appendLine("${camera.cityRegency}, ${camera.province}")
+        appendLine(camera.streamUrl)
+    }
+    val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(android.content.Intent.EXTRA_SUBJECT, "CCTV: ${camera.cameraName}")
+        putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+    }
+    context.startActivity(android.content.Intent.createChooser(intent, null))
+}
+
+@Composable
+private fun MetadataRow(label: String, value: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.xs)) {
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(value, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
@@ -287,7 +406,7 @@ fun PlayerSurface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xCC111111))
-                    .padding(16.dp),
+                    .padding(Spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {

@@ -7,7 +7,6 @@
     <string name="tab_map">Map</string>
     <string name="tab_search">Search</string>
     <string name="tab_favorites">Favorites</string>
-    <string name="tab_about">About</string>
 
     <!-- Home -->
     <string name="home_title">Nusantara CCTV</string>
@@ -71,7 +70,7 @@
     <string name="offline_banner">No internet connection. Camera metadata stays available; live streams need a connection.</string>
 
     <!-- About -->
-    <string name="about_title">About</string>
+    <string name="settings_title">Settings</string>
     <string name="about_app_section">App</string>
     <string name="about_version">App version</string>
     <string name="about_developer_section">Developer</string>
@@ -140,4 +139,22 @@
     <string name="map_osiris_layers">Layers</string>
     <string name="map_osiris_live">LIVE</string>
     <string name="map_osiris_entities">%1$d entities</string>
+    <string name="action_save">Save</string>
+    <string name="action_saved">Saved</string>
+    <string name="action_share">Share</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="show_technical_details">Show technical details</string>
+    <string name="hide_technical_details">Hide technical details</string>
+    <string name="metadata_stream_type">Stream type</string>
+    <string name="metadata_stream_url">Stream URL</string>
+    <string name="metadata_source">Source</string>
+    <string name="metadata_portal_url">Portal URL</string>
+    <string name="metadata_coordinates">Coordinates</string>
+    <string name="metadata_confidence">Confidence score</string>
+    <string name="metadata_camera_id">Camera ID</string>
+    <string name="suggestions_recent">Recent</string>
+    <string name="suggestions_locations">Locations</string>
+    <string name="suggestions_cameras">Cameras</string>
+    <string name="section_near_you">Near You</string>
+    <string name="distance_km">%1$.1f km</string>
 </resources>

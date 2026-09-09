@@ -70,5 +70,19 @@ class AppPreferencesRepository(private val context: Context) {
         context.appPrefs.edit { it[KEY_MAP_LAYER] = layer }
     }
 
+    private val KEY_RECENT_SEARCHES = stringPreferencesKey("recent_searches")
+
+    suspend fun addRecentSearch(query: String) {
+        if (query.isBlank()) return
+        val recent = getRecentSearches().toMutableList()
+        recent.remove(query)
+        recent.add(0, query)
+        context.appPrefs.edit { it[KEY_RECENT_SEARCHES] = recent.take(10).joinToString("|") }
+    }
+
+    suspend fun getRecentSearches(): List<String> =
+        (context.appPrefs.data.first()[KEY_RECENT_SEARCHES] ?: "")
+            .split("|").filter { it.isNotBlank() }
+
     suspend fun snapshot(): AppPreferences = preferences.first()
 }

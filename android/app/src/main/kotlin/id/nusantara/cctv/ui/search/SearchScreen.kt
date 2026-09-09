@@ -17,7 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.LocationCity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -25,6 +32,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -50,24 +58,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.nusantara.cctv.ui.theme.Spacing
+import id.nusantara.cctv.ui.theme.Shapes
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.model.Camera
 import id.nusantara.cctv.ui.appContainer
 import id.nusantara.cctv.ui.components.CameraCard
+import id.nusantara.cctv.ui.components.CameraCardSkeleton
 import id.nusantara.cctv.ui.components.EmptyState
 import id.nusantara.cctv.ui.factoryOf
 
 private val STATUS_OPTIONS = listOf("ONLINE", "OFFLINE", "TIMEOUT", "AUTH_REQUIRED", "INVALID_STREAM", "UNKNOWN")
 private val STREAM_TYPES = listOf("HLS", "DASH", "MJPEG", "RTSP")
 
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@OptIn(
+    androidx.compose.material3.ExperimentalMaterial3Api::class,
+    androidx.compose.foundation.ExperimentalFoundationApi::class,
+)
 @Composable
 fun SearchScreen(onCameraClick: (Camera) -> Unit) {
     val vm: SearchViewModel = viewModel(factory = factoryOf {
-        SearchViewModel(it.appContainer.database.cameraDao(), it.appContainer.catalogRepository)
+        SearchViewModel(
+            it.appContainer.database.cameraDao(),
+            it.appContainer.catalogRepository,
+            it.appContainer.preferencesRepository,
+        )
     })
     val state by vm.state.collectAsState()
     val refreshing by vm.refreshing.collectAsState()
+    val isLoading by vm.isLoading.collectAsState()
     val listState = rememberLazyListState()
 
     // Field memakai state lokal agar tidak tertinggal debounce; VM tetap menerima setiap ketikan.
@@ -93,8 +112,8 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            shape = RoundedCornerShape(28.dp),
+                .padding(horizontal = Spacing.lg, vertical = Spacing.md),
+            shape = Shapes.pill,
             color = MaterialTheme.colorScheme.surfaceVariant,
             tonalElevation = 2.dp,
         ) {
@@ -102,7 +121,7 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
                 Icon(
                     Icons.Filled.Search,
                     contentDescription = null,
-                    modifier = Modifier.padding(start = 16.dp),
+                    modifier = Modifier.padding(start = Spacing.lg),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 BasicTextField(
@@ -113,12 +132,15 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 12.dp, vertical = 14.dp),
+                        .padding(horizontal = Spacing.md, vertical = 14.dp),
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                        onSearch = { vm.onSearchSubmit(fieldText) },
+                    ),
                     decorationBox = { inner ->
                         Box(contentAlignment = Alignment.CenterStart) {
                             if (fieldText.isEmpty()) {
@@ -148,13 +170,59 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
             }
         }
 
+        // --- Suggestions (B2) ---
+        if (state.matchingCameras.isNotEmpty() || state.matchingLocations.isNotEmpty() ||
+            (fieldText.isBlank() && (state.recentSearches.isNotEmpty()))) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Spacing.lg),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            ) {
+                Column(Modifier.padding(vertical = Spacing.xs)) {
+                    if (fieldText.isBlank() && state.recentSearches.isNotEmpty()) {
+                        SuggestSection(stringResource(R.string.suggestions_recent)) {
+                            state.recentSearches.forEach { q ->
+                                SuggestRow(Icons.Filled.History, q) {
+                                    fieldText = q
+                                    vm.onQueryChange(q)
+                                    vm.onSearchSubmit(q)
+                                }
+                            }
+                        }
+                    }
+                    if (state.matchingLocations.isNotEmpty()) {
+                        SuggestSection(stringResource(R.string.suggestions_locations)) {
+                            state.matchingLocations.forEach { loc ->
+                                SuggestRow(Icons.Filled.LocationCity, loc) {
+                                    fieldText = loc
+                                    vm.onQueryChange(loc)
+                                }
+                            }
+                        }
+                    }
+                    if (state.matchingCameras.isNotEmpty()) {
+                        SuggestSection(stringResource(R.string.suggestions_cameras)) {
+                            state.matchingCameras.forEach { cam ->
+                                SuggestRow(Icons.Filled.Videocam, "${cam.cameraName}  (${cam.cityRegency})") {
+                                    fieldText = ""
+                                    vm.onQueryChange("")
+                                    onCameraClick(cam)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // --- Chips filter ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = Spacing.lg),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
             FilterDropdown(
                 label = state.filters.province ?: stringResource(R.string.filter_province),
@@ -201,7 +269,7 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                    .padding(horizontal = Spacing.lg, vertical = Spacing.xs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -226,10 +294,13 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(Spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
-                if (state.results.isEmpty()) {
+                if (state.results.isEmpty() && isLoading) {
+                    items(8) { CameraCardSkeleton() }
+                }
+                if (state.results.isEmpty() && !isLoading) {
                     item {
                         val hasQuery = state.query.isNotBlank()
                         EmptyState(
@@ -241,7 +312,21 @@ fun SearchScreen(onCameraClick: (Camera) -> Unit) {
                         )
                     }
                 }
-                items(state.results, key = { it.id }) { CameraCard(it, onCameraClick) }
+                // D3: hasil dikelompokkan per provinsi dengan sticky header
+                state.groupedResults.forEach { (province, cams) ->
+                    stickyHeader(key = "hdr-$province") {
+                        Surface(color = MaterialTheme.colorScheme.surfaceVariant, tonalElevation = 2.dp) {
+                            Text(
+                                "$province (${cams.size})",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = Spacing.lg, vertical = Spacing.md),
+                            )
+                        }
+                    }
+                    items(cams, key = { it.id }) { CameraCard(it, onCameraClick) }
+                }
                 if (state.loadingMore) {
                     item {
                         Box(
@@ -293,5 +378,33 @@ private fun FilterDropdown(
                 },
             )
         }
+    }
+}
+
+
+@Composable
+private fun SuggestSection(title: String, content: @Composable () -> Unit) {
+    Text(
+        title.uppercase(),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(horizontal = Spacing.lg, vertical = Spacing.xs),
+    )
+    content()
+}
+
+@Composable
+private fun SuggestRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+    ) {
+        Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(label, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
     }
 }

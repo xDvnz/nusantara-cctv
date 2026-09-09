@@ -52,6 +52,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.nusantara.cctv.ui.theme.Spacing
+import id.nusantara.cctv.ui.theme.Shapes
 import id.nusantara.cctv.R
 import id.nusantara.cctv.data.catalog.CatalogRepository
 import id.nusantara.cctv.data.model.Camera
@@ -151,7 +153,7 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
             onSelect = vm::setMapLayer,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(12.dp),
+                .padding(Spacing.md),
         )
 
         // ===== Status bar bawah: LIVE / ENTITIES / koordinat =====
@@ -160,7 +162,7 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
             centerText = centerText,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(12.dp),
+                .padding(Spacing.md),
         )
     }
 
@@ -168,7 +170,7 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
         ModalBottomSheet(onDismissRequest = { layerSheetOpen = false }) {
             Text(
                 stringResource(R.string.map_layer_title),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+                modifier = Modifier.padding(horizontal = Spacing.xl, vertical = Spacing.md),
                 style = MaterialTheme.typography.titleLarge,
             )
             MapLayer.entries.forEach { layer ->
@@ -183,10 +185,10 @@ fun MapScreen(onCameraClick: (Camera) -> Unit) {
     selectedCamera?.let { camera ->
         ModalBottomSheet(onDismissRequest = { selectedCamera = null }) {
             Card(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.lg, vertical = Spacing.sm),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             ) {
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.padding(Spacing.lg), verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     Text(camera.cameraName, style = MaterialTheme.typography.titleLarge)
                     Text(
                         "${camera.locationName}, ${camera.cityRegency}",
@@ -232,10 +234,10 @@ private fun LayerPanel(
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.sm)) {
         // tombol utama
         Card(
-            shape = RoundedCornerShape(10.dp),
+            shape = Shapes.small,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
             ),
@@ -243,9 +245,9 @@ private fun LayerPanel(
             Row(
                 modifier = Modifier
                     .clickable { open = !open }
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                    .padding(horizontal = Spacing.md, vertical = Spacing.sm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
             ) {
                 Icon(
                     Icons.Filled.Layers,
@@ -265,17 +267,17 @@ private fun LayerPanel(
         // pilihan basemap inline (muncul saat panel dibuka)
         AnimatedVisibility(visible = open, enter = fadeIn(), exit = fadeOut()) {
             Card(
-                shape = RoundedCornerShape(10.dp),
+                shape = Shapes.small,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
                 ),
             ) {
-                Column(Modifier.padding(vertical = 4.dp)) {
+                Column(Modifier.padding(vertical = Spacing.xs)) {
                     MapLayer.entries.forEach { layer ->
                         Row(
                             modifier = Modifier
                                 .clickable { onSelect(layer) }
-                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                .padding(horizontal = Spacing.md, vertical = Spacing.sm)
                                 .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -316,7 +318,7 @@ private fun StatusBar(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
+        shape = Shapes.small,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.92f),
         ),
@@ -324,7 +326,7 @@ private fun StatusBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .padding(horizontal = Spacing.md, vertical = Spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -364,12 +366,12 @@ private fun LayerRow(layer: MapLayer, selected: Boolean, onClick: () -> Unit) {
             .heightIn(min = 56.dp)
             .semantics { role = Role.RadioButton }
             .clickable(onClick = onClick)
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = Spacing.xl, vertical = Spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             Modifier.size(width = 52.dp, height = 36.dp)
-                .background(layerPreviewColor(layer), RoundedCornerShape(8.dp)),
+                .background(layerPreviewColor(layer), Shapes.small),
         )
         Spacer(Modifier.width(16.dp))
         Text(stringResource(layer.labelRes), modifier = Modifier.weight(1f))
@@ -396,15 +398,21 @@ private fun rebuildMarkers(
         map.invalidate()
         return
     }
-    val density = map.resources.displayMetrics.density
     val clusterer = CameraClusterer()
-    val groups = clusterer.cluster(items, map.projection, cellPxOverride = (90 * density).toInt())
+    val groups = clusterer.cluster(items, map.projection, map.zoomLevelDouble)
     for (group in groups) {
         val marker = Marker(map)
         marker.position = GeoPoint(group.centerLat, group.centerLng)
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         if (group.isCluster) {
-            marker.icon = MarkerIcons.cluster(group.items.size)
+            marker.icon = MarkerIcons.cluster(
+                group.items.size,
+                sizePx = when {
+                    group.items.size > 50 -> 60
+                    group.items.size > 10 -> 52
+                    else -> 44
+                },
+            )
             marker.title = "${group.items.size} kamera"
             marker.setOnMarkerClickListener { _, _ ->
                 map.controller.animateTo(marker.position)

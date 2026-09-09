@@ -7,7 +7,6 @@
     <string name="tab_map">Peta</string>
     <string name="tab_search">Cari</string>
     <string name="tab_favorites">Favorit</string>
-    <string name="tab_about">Tentang</string>
 
     <!-- Beranda -->
     <string name="home_title">Nusantara CCTV</string>
@@ -71,7 +70,7 @@
     <string name="offline_banner">Tidak ada koneksi internet. Metadata kamera tetap bisa dibuka; live stream butuh koneksi.</string>
 
     <!-- Tentang -->
-    <string name="about_title">Tentang</string>
+    <string name="settings_title">Pengaturan</string>
     <string name="about_app_section">Aplikasi</string>
     <string name="about_version">Versi aplikasi</string>
     <string name="about_developer_section">Pengembang</string>
@@ -140,4 +139,22 @@
     <string name="map_osiris_layers">Lapisan</string>
     <string name="map_osiris_live">LIVE</string>
     <string name="map_osiris_entities">%1$d entitas</string>
+    <string name="action_save">Simpan</string>
+    <string name="action_saved">Tersimpan</string>
+    <string name="action_share">Bagikan</string>
+    <string name="action_refresh">Segarkan</string>
+    <string name="show_technical_details">Tampilkan detail teknis</string>
+    <string name="hide_technical_details">Sembunyikan detail teknis</string>
+    <string name="metadata_stream_type">Jenis stream</string>
+    <string name="metadata_stream_url">URL stream</string>
+    <string name="metadata_source">Sumber</string>
+    <string name="metadata_portal_url">URL portal</string>
+    <string name="metadata_coordinates">Koordinat</string>
+    <string name="metadata_confidence">Skor keyakinan</string>
+    <string name="metadata_camera_id">ID kamera</string>
+    <string name="suggestions_recent">Terakhir dicari</string>
+    <string name="suggestions_locations">Lokasi</string>
+    <string name="suggestions_cameras">Kamera</string>
+    <string name="section_near_you">Di sekitarmu</string>
+    <string name="distance_km">%1$.1f km</string>
 </resources>

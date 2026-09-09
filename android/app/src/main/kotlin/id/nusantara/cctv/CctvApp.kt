@@ -71,6 +71,8 @@ class AppContainer(private val app: Application) {
 
     val updateChecker = id.nusantara.cctv.data.update.UpdateChecker()
 
+    val locationProvider = id.nusantara.cctv.util.LocationProvider(app)
+
     private val remoteCatalogUrl: String = BuildConfig.REMOTE_CATALOG_URL
 
     val catalogRepository = CatalogRepository(app, database, remoteCatalogUrl)
