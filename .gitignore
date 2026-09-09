@@ -38,3 +38,11 @@ AGENTS.md
 
 # Worktree sisa agent lain
 .claude/
+# Dokumen internal & artefak temp — tidak di-commit (perintah user)
+MASTER PROMPT*.md
+docs/PHASE0-ENVIRONMENT.md
+docs/PROJECT-STATUS.md
+docs/superpowers/
+tools/parse_dump.py
+data/dump.xml
+data/shots*.png
