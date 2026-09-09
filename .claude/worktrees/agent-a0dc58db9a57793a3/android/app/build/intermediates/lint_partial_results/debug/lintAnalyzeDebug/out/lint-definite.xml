@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.9.1" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.19.0">
+        <fix-replace
+            description="Change to 1.19.0"
+            family="Update versions"
+            oldString="1.15.0"
+            replacement="1.19.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="72"
+            column="20"
+            startOffset="2284"
+            endLine="72"
+            endColumn="51"
+            endOffset="2315"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.8.0">
+        <fix-replace
+            description="Change to 1.8.0"
+            family="Update versions"
+            oldString="1.7.0"
+            replacement="1.8.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="73"
+            column="20"
+            startOffset="2336"
+            endLine="73"
+            endColumn="56"
+            endOffset="2372"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.9.3"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="74"
+            column="20"
+            startOffset="2393"
+            endLine="74"
+            endColumn="62"
+            endOffset="2435"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="75"
+            column="20"
+            startOffset="2456"
+            endLine="75"
+            endColumn="72"
+            endOffset="2508"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.7 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="76"
+            column="20"
+            startOffset="2529"
+            endLine="76"
+            endColumn="74"
+            endOffset="2583"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-compose than 2.8.5 is available: 2.10.0">
+        <fix-replace
+            description="Change to 2.10.0"
+            family="Update versions"
+            oldString="2.8.5"
+            replacement="2.10.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="77"
+            column="20"
+            startOffset="2604"
+            endLine="77"
+            endColumn="66"
+            endOffset="2650"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="86"
+            column="20"
+            startOffset="3022"
+            endLine="86"
+            endColumn="54"
+            endOffset="3056"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="87"
+            column="20"
+            startOffset="3077"
+            endLine="87"
+            endColumn="50"
+            endOffset="3107"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="88"
+            column="9"
+            startOffset="3117"
+            endLine="88"
+            endColumn="44"
+            endOffset="3152"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.7.3 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.7.3"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="93"
+            column="20"
+            startOffset="3376"
+            endLine="93"
+            endColumn="76"
+            endOffset="3432"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.9.0"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="94"
+            column="20"
+            startOffset="3453"
+            endLine="94"
+            endColumn="76"
+            endOffset="3509"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.5.1 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.5.1"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="96"
+            column="20"
+            startOffset="3531"
+            endLine="96"
+            endColumn="60"
+            endOffset="3571"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.media3:media3-exoplayer-hls than 1.5.1 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.5.1"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="97"
+            column="20"
+            startOffset="3592"
+            endLine="97"
+            endColumn="64"
+            endOffset="3636"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.media3:media3-ui than 1.5.1 is available: 1.11.0">
+        <fix-replace
+            description="Change to 1.11.0"
+            family="Update versions"
+            oldString="1.5.1"
+            replacement="1.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="98"
+            column="20"
+            startOffset="3657"
+            endLine="98"
+            endColumn="53"
+            endOffset="3690"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1">
+        <fix-replace
+            description="Change to 1.2.1"
+            family="Update versions"
+            oldString="1.1.1"
+            replacement="1.2.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="102"
+            column="20"
+            startOffset="3772"
+            endLine="102"
+            endColumn="68"
+            endOffset="3820"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test:core than 1.6.1 is available: 1.7.0">
+        <fix-replace
+            description="Change to 1.7.0"
+            family="Update versions"
+            oldString="1.6.1"
+            replacement="1.7.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="107"
+            column="24"
+            startOffset="4030"
+            endLine="107"
+            endColumn="50"
+            endOffset="4056"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-testing than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="108"
+            column="24"
+            startOffset="4081"
+            endLine="108"
+            endColumn="58"
+            endOffset="4115"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.2.1"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="110"
+            column="31"
+            startOffset="4148"
+            endLine="110"
+            endColumn="62"
+            endOffset="4179"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.6.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.6.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle.kts"
+            line="111"
+            column="31"
+            startOffset="4211"
+            endLine="111"
+            endColumn="75"
+            endOffset="4255"/>
+    </incident>
+
+    <incident
+        id="ModifierFactoryExtensionFunction"
+        severity="warning"
+        message="Modifier factory functions should be extensions on Modifier">
+        <fix-replace
+            description="Add Modifier receiver"
+            robot="true"
+            independent="true"
+            oldString="modifier"
+            replacement="Modifier.modifier"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/components/PressScale.kt"
+                startOffset="804"
+                endOffset="1248"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/components/PressScale.kt"
+            line="22"
+            column="9"
+            startOffset="824"
+            endLine="22"
+            endColumn="17"
+            endOffset="832"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;official&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values-en/strings.xml"
+            line="100"
+            column="5"
+            startOffset="6125"
+            endLine="100"
+            endColumn="91"
+            endOffset="6211"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;sumber&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="100"
+            column="5"
+            startOffset="6224"
+            endLine="100"
+            endColumn="80"
+            endOffset="6299"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;hasil&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="129"
+            column="5"
+            startOffset="7855"
+            endLine="129"
+            endColumn="73"
+            endOffset="7923"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;results&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values-en/strings.xml"
+            line="129"
+            column="5"
+            startOffset="7736"
+            endLine="129"
+            endColumn="76"
+            endOffset="7807"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <fix-data file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26" folderName="mipmap-anydpi" requiresApi="26"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26"/>
+    </incident>
+
+    <incident
+        id="StaticFieldLeak"
+        severity="warning"
+        message="This field leaks a context object">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/about/AboutViewModel.kt"
+            line="31"
+            column="5"
+            startOffset="1105"
+            endLine="31"
+            endColumn="33"
+            endOffset="1133"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(info.url)"
+            replacement="info.url.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/about/AboutScreen.kt"
+                startOffset="8204"
+                endOffset="8235"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/about/AboutScreen.kt"
+            line="177"
+            column="33"
+            startOffset="8204"
+            endLine="177"
+            endColumn="64"
+            endOffset="8235"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(info.url)"
+            replacement="info.url.toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/AppRoot.kt"
+                startOffset="8170"
+                endOffset="8201"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/AppRoot.kt"
+            line="186"
+            column="84"
+            startOffset="8170"
+            endLine="186"
+            endColumn="115"
+            endOffset="8201"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(sizePx, sizePx)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+                startOffset="2327"
+                endOffset="2387"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+            line="70"
+            column="19"
+            startOffset="2327"
+            endLine="70"
+            endColumn="79"
+            endOffset="2387"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Bitmap.toDrawable` instead?">
+        <fix-replace
+            description="Replace with the toDrawable extension function"
+            family="Replace with the toDrawable extension function"
+            robot="true"
+            independent="true"
+            oldString="BitmapDrawable(null, bmp)"
+            replacement="bmp.toDrawable(null)"
+            reformat="value"
+            imports="androidx.core.graphics.drawable.toDrawable"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+                startOffset="3107"
+                endOffset="3132"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+            line="87"
+            column="24"
+            startOffset="3107"
+            endLine="87"
+            endColumn="49"
+            endOffset="3132"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(sizePx, sizePx)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+                startOffset="3223"
+                endOffset="3283"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+            line="91"
+            column="19"
+            startOffset="3223"
+            endLine="91"
+            endColumn="79"
+            endOffset="3283"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Bitmap.toDrawable` instead?">
+        <fix-replace
+            description="Replace with the toDrawable extension function"
+            family="Replace with the toDrawable extension function"
+            robot="true"
+            independent="true"
+            oldString="BitmapDrawable(null, bmp)"
+            replacement="bmp.toDrawable(null)"
+            reformat="value"
+            imports="androidx.core.graphics.drawable.toDrawable"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+                startOffset="3799"
+                endOffset="3824"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/map/Clusterer.kt"
+            line="100"
+            column="24"
+            startOffset="3799"
+            endLine="100"
+            endColumn="49"
+            endOffset="3824"/>
+    </incident>
+
+</incidents>

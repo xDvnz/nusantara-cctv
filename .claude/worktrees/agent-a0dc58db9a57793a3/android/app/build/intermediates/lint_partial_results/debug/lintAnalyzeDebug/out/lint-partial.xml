@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.9.1" type="partial_results">
+    <map id="UnsafeImplicitIntentLaunch">
+            <map id="actionsSent">
+                    <map id="android.intent.action.VIEW (used to start an activity)">
+                        <location id="0"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/about/AboutScreen.kt"
+                            line="175"
+                            column="42"
+                            startOffset="8080"
+                            endLine="178"
+                            endColumn="30"
+                            endOffset="8266"/>
+                        <location id="1"
+                            file="${:app*debug*MAIN*sourceProvider*0*javaDir*2}/id/nusantara/cctv/ui/AppRoot.kt"
+                            line="186"
+                            column="25"
+                            startOffset="8111"
+                            endLine="186"
+                            endColumn="116"
+                            endOffset="8202"/>
+                    </map>
+            </map>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="id.nusantara.cctv.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.mipmap.ic_launcher_round"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"
+            startOffset="40"
+            endLine="6"
+            endColumn="17"
+            endOffset="345"/>
+        <location id="R.string.camera_offline_badge"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="111"
+            column="13"
+            startOffset="6858"
+            endLine="111"
+            endColumn="40"
+            endOffset="6885"/>
+        <location id="R.string.catalog_url_example"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="92"
+            column="13"
+            startOffset="5445"
+            endLine="92"
+            endColumn="39"
+            endOffset="5471"/>
+        <location id="R.string.history_empty"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="21"
+            column="13"
+            startOffset="856"
+            endLine="21"
+            endColumn="33"
+            endOffset="876"/>
+        <location id="R.string.history_see_all"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="22"
+            column="13"
+            startOffset="942"
+            endLine="22"
+            endColumn="35"
+            endOffset="964"/>
+        <location id="R.string.loading_more"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="38"
+            column="13"
+            startOffset="1885"
+            endLine="38"
+            endColumn="32"
+            endOffset="1904"/>
+        <location id="R.string.never"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="112"
+            column="13"
+            startOffset="6915"
+            endLine="112"
+            endColumn="25"
+            endOffset="6927"/>
+        <location id="R.string.settings_content_desc"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="23"
+            column="13"
+            startOffset="999"
+            endLine="23"
+            endColumn="41"
+            endOffset="1027"/>
+        <location id="R.string.theme_system"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="83"
+            column="13"
+            startOffset="4587"
+            endLine="83"
+            endColumn="32"
+            endOffset="4606"/>
+        <location id="R.string.update_check_failed"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="119"
+            column="13"
+            startOffset="7257"
+            endLine="119"
+            endColumn="39"
+            endOffset="7283"/>
+        <entry
+            name="model"
+            string="color[ic_launcher_background(U)],drawable[ic_launcher_foreground(U)],mipmap[ic_launcher(U),ic_launcher_round(D)],raw[geotrust_tls_rsa_ca_g1(U)],string[app_name(U),tab_home(U),tab_map(U),tab_search(U),tab_favorites(U),tab_about(U),home_title(U),home_subtitle(U),stat_total(U),stat_online(U),stat_offline(U),section_favorites(U),section_history(U),section_recent_checked(U),history_empty(D),history_see_all(D),settings_content_desc(D),search_hint(U),filter_province(U),filter_city(U),filter_district(U),filter_status(U),filter_stream(U),filter_operator(U),filter_all(U),search_empty_title(U),search_empty_hint(U),search_no_result_title(U),search_no_result_hint(U),loading_more(D),favorites_title(U),favorites_empty_title(U),favorites_empty_hint(U),detail_title_fallback(U),back(U),fullscreen_button(U),reload_button(U),check_status_button(U),checked_at(U),coordinates_label(U),source_attribution(U),favorite_add(U),favorite_remove(U),open_in_map(U),error_player(U),retry(U),stream_ended(U),connection_failed(U),stream_unavailable(U),play_failed(U),source_not_playable(U),mjpeg_inactive(U),unsupported_rtsp(U),unsupported_format(U),offline_banner(U),about_title(U),about_app_section(U),about_version(U),about_developer_section(U),about_developer_name(U),about_developer_note(U),about_repo(U),about_appearance_section(U),theme_label(U),theme_system(D),theme_light(U),theme_dark(U),language_label(U),language_id(U),language_en(U),about_catalog_section(U),catalog_version_label(U),catalog_remote_hint(U),catalog_url_example(D),catalog_url_label(U),save_sync_button(U),syncing(U),sync_updated(U),sync_up_to_date(U),about_sources_section(U),about_sources_note(U),about_sources_count(U),sources_expand(U),sources_collapse(U),update_dialog_title(U),update_dialog_message(U),update_dialog_later(U),update_dialog_open(U),camera_offline_badge(D),never(D),update_section(U),check_update_button(U),update_checking(U),update_latest_ok(U),update_check_failed(D),download_button(U),theme_cyber(U),theme_monochrome(U),theme_material_you(U),map_layer_title(U),map_layer_default(U),map_layer_satellite(U),map_layer_dark(U),map_layer_terrain(U),search_result_count(U),search_clear_filters(U),search_clear(U)],style[Theme_NusantaraCctv(U),Theme_AppCompat_DayNight_NoActionBar(R)],xml[locales_config(U),network_security_config(U)];2^0^1,3^0^1,70^71,73^4;;;"/>
+    </map>
+
+</incidents>

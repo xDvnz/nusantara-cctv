@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nusantara CCTV Catalog",
+  "type": "object",
+  "required": ["catalog_version", "generated_at", "sources", "cameras"],
+  "properties": {
+    "catalog_version": { "type": "integer", "description": "Naik setiap regenerasi; dipakai aplikasi untuk deteksi update" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_name", "source_url", "operator", "access_type", "license_note"],
+        "properties": {
+          "source_id": { "type": "string" },
+          "source_name": { "type": "string" },
+          "source_url": { "type": "string" },
+          "operator": { "type": "string" },
+          "access_type": { "enum": ["PUBLIC_DIRECT", "PUBLIC_API", "PUBLIC_EMBED", "OFFICIAL_PORTAL"] },
+          "auth_needed_for_stream": { "type": "boolean", "description": "true bila stream butuh cookie/referer sesi publik (bukan login)" },
+          "bootstrap_url": { "type": "string", "description": "URL untuk membangun sesi cookie sebelum akses stream" },
+          "referer": { "type": "string" },
+          "license_note": { "type": "string" }
+        }
+      }
+    },
+    "cameras": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "camera_name", "source_id", "stream_type", "stream_url", "access_type", "status"],
+        "properties": {
+          "id": { "type": "string", "description": "Deterministik: sha1(source_id + public_identifier) pendek — stabil antar-regenerasi" },
+          "camera_name": { "type": "string" },
+          "camera_code": { "type": "string" },
+          "province": { "type": "string" },
+          "city_regency": { "type": "string" },
+          "district": { "type": "string", "description": "kecamatan" },
+          "subdistrict": { "type": "string", "description": "kelurahan/desa" },
+          "location_name": { "type": "string" },
+          "latitude": { "type": ["number", "null"] },
+          "longitude": { "type": ["number", "null"] },
+          "location_accuracy": { "enum": ["exact", "approximate", "administrative_only", "none"] },
+          "source_id": { "type": "string" },
+          "source_name": { "type": "string" },
+          "source_url": { "type": "string" },
+          "operator": { "type": "string" },
+          "access_type": { "enum": ["PUBLIC_DIRECT", "PUBLIC_API", "PUBLIC_EMBED", "OFFICIAL_PORTAL"] },
+          "stream_type": { "enum": ["HLS", "DASH", "MJPEG", "RTSP", "UNKNOWN"] },
+          "stream_url": { "type": "string" },
+          "api_endpoint": { "type": "string" },
+          "public_identifier": { "type": "string" },
+          "status": { "enum": ["ONLINE", "OFFLINE", "TIMEOUT", "AUTH_REQUIRED", "INVALID_STREAM", "MOVED", "UNKNOWN"] },
+          "last_checked": { "type": ["string", "null"], "format": "date-time" },
+          "timezone": { "type": "string", "const": "Asia/Jakarta", "description": "Sumber Indonesia; WIB default" },
+          "license": { "type": "string" },
+          "terms_of_use": { "type": "string" },
+          "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "notes": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "id.nusantara.cctv.app-mergeDebugResources-69:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\8.11.1\\transforms\\2436cce4c2404aaf13873962c10517ad\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

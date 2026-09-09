@@ -1,0 +1,279 @@
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\AndroidManifest.xml:19: Warning: Attribute localeConfig is only used in API level 33 and higher (current min is 26) [UnusedAttribute]
+        android:localeConfig="@xml/locales_config"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedAttribute":
+   This check finds attributes set in XML files that were introduced in a
+   version newer than the oldest version targeted by your application (with
+   the minSdkVersion attribute).
+
+   This is not an error; the application will simply ignore the attribute.
+   However, if the attribute is important to the appearance or functionality
+   of your application, you should consider finding an alternative way to
+   achieve the same result with only available attributes, and then you can
+   optionally create a copy of the layout in a layout-vNN folder which will be
+   used on API NN or higher where you can take advantage of the newer
+   attribute.
+
+   Note: This check does not only apply to attributes. For example, some tags
+   can be unused too, such as the new <tag> element in layouts introduced in
+   API 21.
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:72: Warning: A newer version of androidx.core:core-ktx than 1.15.0 is available: 1.19.0 [GradleDependency]
+    implementation("androidx.core:core-ktx:1.15.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:73: Warning: A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.8.0 [GradleDependency]
+    implementation("androidx.appcompat:appcompat:1.7.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:74: Warning: A newer version of androidx.activity:activity-compose than 1.9.3 is available: 1.13.0 [GradleDependency]
+    implementation("androidx.activity:activity-compose:1.9.3")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:75: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:76: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.7 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:77: Warning: A newer version of androidx.navigation:navigation-compose than 2.8.5 is available: 2.10.0 [GradleDependency]
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:86: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4 [GradleDependency]
+    implementation("androidx.room:room-runtime:2.6.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:87: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.4 [GradleDependency]
+    implementation("androidx.room:room-ktx:2.6.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:88: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4 [GradleDependency]
+    ksp("androidx.room:room-compiler:2.6.1")
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:93: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-serialization-json than 1.7.3 is available: 1.11.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:94: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.11.0 [GradleDependency]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:96: Warning: A newer version of androidx.media3:media3-exoplayer than 1.5.1 is available: 1.11.0 [GradleDependency]
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:97: Warning: A newer version of androidx.media3:media3-exoplayer-hls than 1.5.1 is available: 1.11.0 [GradleDependency]
+    implementation("androidx.media3:media3-exoplayer-hls:1.5.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:98: Warning: A newer version of androidx.media3:media3-ui than 1.5.1 is available: 1.11.0 [GradleDependency]
+    implementation("androidx.media3:media3-ui:1.5.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:102: Warning: A newer version of androidx.datastore:datastore-preferences than 1.1.1 is available: 1.2.1 [GradleDependency]
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:107: Warning: A newer version of androidx.test:core than 1.6.1 is available: 1.7.0 [GradleDependency]
+    testImplementation("androidx.test:core:1.6.1")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:108: Warning: A newer version of androidx.room:room-testing than 2.6.1 is available: 2.8.4 [GradleDependency]
+    testImplementation("androidx.room:room-testing:2.6.1")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:110: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\build.gradle.kts:111: Warning: A newer version of androidx.test.espresso:espresso-core than 3.6.1 is available: 3.7.0 [GradleDependency]
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\components\PressScale.kt:22: Warning: Modifier factory functions should be extensions on Modifier [ModifierFactoryExtensionFunction from androidx.compose.ui]
+    fun modifier(pressedScale: Float = 0.96f): Modifier {
+        ~~~~~~~~
+
+   Explanation for issues of type "ModifierFactoryExtensionFunction":
+   Modifier factory functions should be defined as extension functions on
+   Modifier to allow modifiers to be fluently chained.
+
+   Vendor: Jetpack Compose
+   Identifier: androidx.compose.ui
+   Feedback: https://issuetracker.google.com/issues/new?component=612128
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values-en\strings.xml:100: Warning: Formatting %d followed by words ("official"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="about_sources_count">%1$d official sources &#8226; %2$d cameras</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:100: Warning: Formatting %d followed by words ("sumber"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="about_sources_count">%1$d sumber resmi • %2$d kamera</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:129: Warning: Formatting %d followed by words ("hasil"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="search_result_count">%1$d hasil • %2$d filter</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values-en\strings.xml:129: Warning: Formatting %d followed by words ("results"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="search_result_count">%1$d results • %2$d filters</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "PluralsCandidate":
+   This lint check looks for potential errors in internationalization where
+   you have translated a message which involves a quantity and it looks like
+   other parts of the string may need grammatical changes.
+
+   For example, rather than something like this:
+     <string name="try_again">Try again in %d seconds.</string>
+   you should be using a plural:
+      <plurals name="try_again">
+           <item quantity="one">Try again in %d second</item>
+           <item quantity="other">Try again in %d seconds</item>
+       </plurals>
+   This will ensure that in other languages the right set of translations are
+   provided for the different quantity classes.
+
+   (This check depends on some heuristics, so it may not accurately determine
+   whether a string really should be a quantity. You can use tools:ignore to
+   filter out false positives.
+
+   https://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\mipmap-anydpi-v26: Warning: This folder configuration (v26) is unnecessary; minSdkVersion is 26. Merge all the resources in this folder into mipmap-anydpi. [ObsoleteSdkInt]
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\about\AboutViewModel.kt:31: Warning: This field leaks a context object [StaticFieldLeak]
+    private val context: Context,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "StaticFieldLeak":
+   A static field will leak contexts.
+
+   Non-static inner classes have an implicit reference to their outer class.
+   If that outer class is for example a Fragment or Activity, then this
+   reference means that the long-running handler/loader/task will hold a
+   reference to the activity which prevents it from getting garbage
+   collected.
+
+   Similarly, direct field references to activities and fragments from these
+   longer running instances can cause leaks.
+
+   ViewModel classes should never point to Views or non-application Contexts.
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml:2: Warning: The resource R.mipmap.ic_launcher_round appears to be unused [UnusedResources]
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+^
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:21: Warning: The resource R.string.history_empty appears to be unused [UnusedResources]
+    <string name="history_empty">Kamera yang kamu buka akan muncul di sini.</string>
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:22: Warning: The resource R.string.history_see_all appears to be unused [UnusedResources]
+    <string name="history_see_all">Lihat semua</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:23: Warning: The resource R.string.settings_content_desc appears to be unused [UnusedResources]
+    <string name="settings_content_desc">Pengaturan</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:38: Warning: The resource R.string.loading_more appears to be unused [UnusedResources]
+    <string name="loading_more">Memuat…</string>
+            ~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:83: Warning: The resource R.string.theme_system appears to be unused [UnusedResources]
+    <string name="theme_system">Ikut sistem</string>
+            ~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:92: Warning: The resource R.string.catalog_url_example appears to be unused [UnusedResources]
+    <string name="catalog_url_example">https://raw.githubusercontent.com/xDvnz/nusantara-cctv/main/data/cameras.json</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:111: Warning: The resource R.string.camera_offline_badge appears to be unused [UnusedResources]
+    <string name="camera_offline_badge">Kamera</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:112: Warning: The resource R.string.never appears to be unused [UnusedResources]
+    <string name="never">belum pernah</string>
+            ~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\res\values\strings.xml:119: Warning: The resource R.string.update_check_failed appears to be unused [UnusedResources]
+    <string name="update_check_failed">Pemeriksaan gagal. Periksa koneksi lalu coba lagi.</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\about\AboutScreen.kt:177: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                                android.net.Uri.parse(info.url),
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\AppRoot.kt:186: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                        android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(info.url))
+                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\map\Clusterer.kt:70: Warning: Use the KTX function createBitmap instead? [UseKtx]
+        val bmp = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\map\Clusterer.kt:87: Warning: Use the KTX extension function Bitmap.toDrawable instead? [UseKtx]
+        return bounded(BitmapDrawable(null, bmp))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\map\Clusterer.kt:91: Warning: Use the KTX function createBitmap instead? [UseKtx]
+        val bmp = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Administrator\Documents\cctv\.claude\worktrees\agent-a0dc58db9a57793a3\android\app\src\main\kotlin\id\nusantara\cctv\ui\map\Clusterer.kt:100: Warning: Use the KTX extension function Bitmap.toDrawable instead? [UseKtx]
+        return bounded(BitmapDrawable(null, bmp))
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+0 errors, 43 warnings

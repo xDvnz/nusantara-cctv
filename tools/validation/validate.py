@@ -60,6 +60,27 @@ SOURCES = {
         "workers": 4,
         "delay": 0.2,
     },
+    "banjarbarukota": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://cctv.banjarbarukota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.2,
+    },
+    "kuningankab": {
+        "stream": lambda cam, sid: (
+            f"https://cctv.kuningankab.go.id/stream/{cam['slug']}/playlist.m3u8",
+            {"Referer": "https://cctv.kuningankab.go.id/"},
+        ),
+        "session": None,
+        "workers": 4,
+        "delay": 0.2,
+    },
+    "magelangkota": {
+        "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://cctv.magelangkota.go.id/"}),
+        "session": None,
+        "workers": 4,
+        "delay": 0.2,
+    },
     "bandungkota": {
         "stream": lambda cam, sid: (cam["stream_url"], {"Referer": "https://atcs-dishub.bandung.go.id/"}),
         "session": None,
@@ -113,10 +134,10 @@ def validate_one(source_id, cam):
                 break
         if not target:
             return {**cam, "status": "INVALID_STREAM", "last_checked": now_wib()}
-        if target.endswith(".m3u8"):
-            r2 = s.get(join_url(url, target), timeout=15, headers=extra_headers, verify=False)
-            if r2.status_code != 200 or not r2.text.lstrip().startswith("#EXTM3U"):
-                return {**cam, "status": "INVALID_STREAM", "last_checked": now_wib()}
+        # Varian/playlist dikenali dari ISI (bukan ekstensi — ada URL bertail ?session=)
+        r2 = s.get(join_url(url, target), timeout=15, headers=extra_headers, verify=False)
+        target2 = r2.text.lstrip().startswith("#EXTM3U")
+        if target2:
             seg = None
             for line in r2.text.splitlines():
                 line = line.strip()
@@ -125,7 +146,7 @@ def validate_one(source_id, cam):
                     break
             if not seg:
                 return {**cam, "status": "INVALID_STREAM", "last_checked": now_wib()}
-            seg_url = join_url(url, seg)
+            seg_url = join_url(join_url(url, target), seg)
         else:
             seg_url = join_url(url, target)
         r3 = s.get(seg_url, timeout=20, headers=extra_headers, stream=True, verify=False)
